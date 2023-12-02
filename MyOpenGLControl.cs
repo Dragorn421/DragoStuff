@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Avalonia.OpenGL;
 using Avalonia.OpenGL.Controls;
 using static Avalonia.OpenGL.GlConsts;
@@ -107,6 +108,20 @@ public class MyOpenGLControl : OpenGlControlBase
         gl.EnableVertexAttribArray(0);
 
         CheckError(gl);
+
+        // A hack job to get additional bindings than those provided by Avalonia's GlInterface
+        My_LoadBindings(gl);
+
+        CheckError(gl);
+    }
+
+    private unsafe delegate IntPtr glGetIntegerv_delegate(int pname, int* data);
+    private glGetIntegerv_delegate my_glGetIntegerv;
+    private static int GL_VIEWPORT = 0x0BA2;
+    private void My_LoadBindings(GlInterface gl)
+    {
+        IntPtr p_glGetIntegerv = gl.GetProcAddress("glGetIntegerv");
+        my_glGetIntegerv = (glGetIntegerv_delegate)Marshal.GetDelegateForFunctionPointer(p_glGetIntegerv, typeof(glGetIntegerv_delegate));
     }
 
     protected override void OnOpenGlDeinit(GlInterface gl)
@@ -127,6 +142,17 @@ public class MyOpenGLControl : OpenGlControlBase
 
         gl.ClearColor(0.0f, 0.3f, 0.0f, 1.0f);
         gl.Clear(GL_COLOR_BUFFER_BIT);
+
+        // Query the previous viewport size for investigative purposes
+        var prevViewport = new int[4];
+        unsafe
+        {
+            fixed (int* p_prevViewport = prevViewport)
+            {
+                my_glGetIntegerv(GL_VIEWPORT, p_prevViewport);
+            }
+        }
+        Debug.WriteLine("prevViewport=" + string.Join(",", prevViewport));
 
         // Set viewport to full size
         // Running this in OnOpenGlRender also means the drawing is stretched to the window size on resize
