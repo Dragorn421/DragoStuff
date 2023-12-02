@@ -1,0 +1,15 @@
+wip port of Z64Utils to avalonia (from windows forms thing)
+
+tip: change the cwd to its own folder:
+mkdir launch_cwd
+ln -sd ../Z64Utils-Config-master/versions/ launch_cwd/versions
+ln -sd ../Models/Shaders/ launch_cwd/Shaders
+if using vscode, cf launch.json to change the cwd
+
+tip: run z64utils with arguments to directly open something
+"args": "--rom /home/dragorn421/Documents/oot/baserom.z64 --object-analyzer object_box",
+if using vscode, cf launch.json
+
+build instructions on ubuntu (iirc):
+apt install dotnet-sdk-7.0
+dotnet build

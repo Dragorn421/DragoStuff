@@ -1,0 +1,76 @@
+using System;
+using System.Linq;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
+
+namespace Z64Utils_recreate_avalonia_ui;
+
+public partial class App : Application
+{
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            var win = new MainWindow();
+            desktop.MainWindow = win;
+
+            win.Opened += (sender, ev) =>
+            {
+                string? romPath = Program.ParsedArgs?.RomFile?.FullName;
+                Console.WriteLine($"OnFrameworkInitializationCompleted romPath={romPath}");
+                if (romPath != null)
+                {
+                    win.ViewModel.OpenROM(romPath);
+                    var objectAnalyzerFileNames = Program.ParsedArgs?.ObjectAnalyzerFileNames;
+                    if (objectAnalyzerFileNames != null)
+                    {
+                        Console.WriteLine(
+                            "OnFrameworkInitializationCompleted objectAnalyzerFileNames="
+                            + string.Join(", ", objectAnalyzerFileNames)
+                        );
+                        foreach (var name in objectAnalyzerFileNames)
+                        {
+                            // TODO un-hardcode segment 6
+                            var oavm = win.ViewModel.OpenObjectAnalyzerByFileName(name, 6);
+
+                            // TODO put find and analyze behind more command line args
+                            // TODO don't use the Command funcs themselves?
+                            oavm.FindDListsCommand();
+                            oavm.AnalyzeDListsCommand();
+
+                            var dListViewerOHEName = Program.ParsedArgs?.DListViewerOHEName;
+                            if (dListViewerOHEName != null)
+                            {
+                                ObjectAnalyzerWindowViewModel.ObjectHolderEntry? ohe;
+                                try
+                                {
+                                    ohe = oavm.ObjectHolderEntries.First(ohe => ohe.ObjectHolder.Name == dListViewerOHEName);
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                    ohe = null;
+                                }
+                                if (ohe != null)
+                                {
+                                    oavm.OpenDListViewerObjectHolderEntryCommand.Execute(ohe);
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Could not find an entry with name {dListViewerOHEName}");
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        base.OnFrameworkInitializationCompleted();
+    }
+}
