@@ -137,8 +137,7 @@ public partial class MainWindowViewModel : ObservableObject
     private string _progressText = "hey";
 
     [ObservableProperty]
-    public ObservableCollection<RomFile> _romFiles =
-        new ObservableCollection<RomFile>(new List<RomFile>());
+    public ObservableCollection<RomFile> _romFiles = new();
 
     public class RomFile
     {

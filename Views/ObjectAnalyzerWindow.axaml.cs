@@ -1,5 +1,3 @@
-
-using System;
 using System.Diagnostics;
 using Avalonia.Controls;
 
@@ -19,11 +17,10 @@ public partial class ObjectAnalyzerWindow : Window
         InitializeComponent();
     }
 
-    private DListViewerWindowViewModel OpenDListViewer()
+    private void OpenDListViewer(DListViewerWindowViewModel vm)
     {
-        var win = new DListViewerWindow(ViewModel._game);
+        var win = new DListViewerWindow(vm);
         win.Show(this);
-        return win.ViewModel;
     }
 
     public void OnObjectHolderEntriesDataGridSelectionChanged(object? sender, SelectionChangedEventArgs ev)

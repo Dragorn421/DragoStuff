@@ -26,7 +26,7 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
     public string _windowTitle = DEFAULT_WINDOW_TITLE;
 
     // Provided by the view
-    public Func<DListViewerWindowViewModel>? OpenDListViewer;
+    public Action<DListViewerWindowViewModel>? OpenDListViewer;
 
     public ICommand OpenDListViewerObjectHolderEntryCommand;
 
@@ -90,7 +90,7 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
     //
 
     [ObservableProperty]
-    public ObservableCollection<ObjectHolderEntry> _objectHolderEntries = new(new List<ObjectHolderEntry>());
+    public ObservableCollection<ObjectHolderEntry> _objectHolderEntries = new();
 
     public class ObjectHolderEntry
     {
@@ -166,7 +166,7 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
     {
         Debug.Assert(_object != null);
 
-        // TODO handle this better
+        // TODO handle this better (keep the selection)
         ObjectHolderEntryDetailsViewModel = new EmptyOHEDViewModel();
 
         var newObjectHolderEntries = new List<ObjectHolderEntry>();
@@ -218,8 +218,10 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
 
     private void OpenDListViewerObjectHolderEntryCommandExecute(ObjectHolderEntry ohe)
     {
+        Debug.Assert(_game != null);
+        var dlvVM = new DListViewerWindowViewModel(_game);
         Debug.Assert(OpenDListViewer != null);
-        var dlvVM = OpenDListViewer();
+        OpenDListViewer(dlvVM);
         // TODO
         dlvVM.SomeTextForNow = "soon tm view of DL " + ohe.ObjectHolder.Name;
         Debug.Assert(_file != null);

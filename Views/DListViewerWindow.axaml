@@ -12,13 +12,10 @@
     <DockPanel>
         <TextBlock DockPanel.Dock="Top">something amazing going to happen here</TextBlock>
         <TextBlock DockPanel.Dock="Top" Text="{Binding SomeTextForNow}" />
-        <StackPanel DockPanel.Dock="Top">
-            <Slider Minimum="-180" Maximum="180" Value="{Binding ViewRotX}" />
-            <Slider Minimum="-180" Maximum="180" Value="{Binding ViewRotY}" />
-            <NumericUpDown Increment="100" Value="{Binding ViewPosX}" />
-            <NumericUpDown Increment="100" Value="{Binding ViewPosY}" />
-            <NumericUpDown Increment="100" Value="{Binding ViewPosZ}" />
-        </StackPanel>
-        <v:MyOpenGLControl Name="DLViewerGL" />
+        <TextBlock DockPanel.Dock="Top">Decode error:</TextBlock>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding DecodeError}" />
+        <TextBlock DockPanel.Dock="Top">Render error:</TextBlock>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding RenderError}" />
+        <v:DLViewerControl Name="DLViewerGL" Renderer="{Binding Renderer}" DLists="{Binding DLists}" RenderError="{Binding RenderError}" />
     </DockPanel>
 </Window>
