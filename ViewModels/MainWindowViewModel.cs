@@ -23,6 +23,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     // Provided by the view
     public Func<Task<IStorageFile?>>? GetOpenROM;
+    public Func<Task<int?>>? PickSegmentID;
     public Func<ObjectAnalyzerWindowViewModel>? OpenObjectAnalyzer;
 
     public ICommand OpenObjectAnalyzerRomFileCommand;
@@ -30,6 +31,15 @@ public partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel()
     {
         OpenObjectAnalyzerRomFileCommand = new CommandBase<RomFile>(OpenObjectAnalyzerRomFileCommandExecute);
+        PropertyChanged += (sender, e) =>
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(FilterText):
+                    UpdateRomFiles();
+                    break;
+            }
+        };
     }
 
     public async Task OpenROMCommand()
@@ -109,10 +119,13 @@ public partial class MainWindowViewModel : ObservableObject
 
     //
 
-    private void OpenObjectAnalyzerRomFileCommandExecute(RomFile romFile)
+    private async void OpenObjectAnalyzerRomFileCommandExecute(RomFile romFile)
     {
-        // TODO un-hardcode segment 6
-        OpenObjectAnalyzerByZ64File(romFile.File, 6);
+        Debug.Assert(PickSegmentID != null);
+        int? segmentID = await PickSegmentID();
+        Console.WriteLine("OpenObjectAnalyzerRomFileCommandExecute segmentID=" + segmentID);
+        if (segmentID != null)
+            OpenObjectAnalyzerByZ64File(romFile.File, (int)segmentID);
     }
 
     public ObjectAnalyzerWindowViewModel OpenObjectAnalyzerByZ64File(Z64File file, int segment)
@@ -135,6 +148,8 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string _progressText = "hey";
+    [ObservableProperty]
+    private string _filterText = "";
 
     [ObservableProperty]
     public ObservableCollection<RomFile> _romFiles = new();
@@ -165,6 +180,8 @@ public partial class MainWindowViewModel : ObservableObject
         if (_game == null)
             return;
 
+        string filterText = FilterText.ToLower();
+
         for (int i = 0; i < _game.GetFileCount(); i++)
         {
             var file = _game.GetFileFromIndex(i);
@@ -176,9 +193,15 @@ public partial class MainWindowViewModel : ObservableObject
             string rom = $"{file.RomStart:X8}-{file.RomEnd:X8}";
             string type = $"{_game.GetFileType(file.VRomStart)}";
 
-            RomFiles.Add(
-                new RomFile(name, vrom, rom, type, file)
-            );
+            if (filterText == ""
+                || name.ToLower().Contains(filterText)
+                || type.ToLower().Contains(filterText)
+            )
+            {
+                RomFiles.Add(
+                    new RomFile(name, vrom, rom, type, file)
+                );
+            }
         }
     }
 }

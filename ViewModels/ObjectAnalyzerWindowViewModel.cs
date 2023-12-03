@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
-using Avalonia;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RDP;
 using Z64;
@@ -23,7 +19,7 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
 
     static public string DEFAULT_WINDOW_TITLE = "Object Analyzer";
     [ObservableProperty]
-    public string _windowTitle = DEFAULT_WINDOW_TITLE;
+    private string _windowTitle = DEFAULT_WINDOW_TITLE;
 
     // Provided by the view
     public Action<DListViewerWindowViewModel>? OpenDListViewer;
@@ -33,6 +29,15 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
     public ObjectAnalyzerWindowViewModel()
     {
         OpenDListViewerObjectHolderEntryCommand = new CommandBase<ObjectHolderEntry>(OpenDListViewerObjectHolderEntryCommandExecute);
+        PropertyChanged += (sender, e) =>
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(FilterText):
+                    UpdateMap();
+                    break;
+            }
+        };
     }
 
     // TODO: vvv
@@ -90,7 +95,10 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
     //
 
     [ObservableProperty]
-    public ObservableCollection<ObjectHolderEntry> _objectHolderEntries = new();
+    private string _filterText = "";
+
+    [ObservableProperty]
+    private ObservableCollection<ObjectHolderEntry> _objectHolderEntries = new();
 
     public class ObjectHolderEntry
     {
@@ -171,20 +179,30 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
 
         var newObjectHolderEntries = new List<ObjectHolderEntry>();
 
+        string filterText = FilterText.ToLower();
+
         for (int i = 0; i < _object.Entries.Count; i++)
         {
             var entry = _object.Entries[i];
             var addr = new SegmentedAddress(_segment, _object.OffsetOf(entry));
             string addrStr = $"{addr.VAddr:X8}";
+            string entryTypeStr = entry.GetEntryType().ToString();
 
-            newObjectHolderEntries.Add(
-                new ObjectHolderEntry(
-                    offset: addrStr,
-                    name: entry.Name,
-                    type: entry.GetEntryType().ToString(),
-                    objectHolder: entry
-                )
-            );
+            if (filterText == ""
+                || entry.Name.ToLower().Contains(filterText)
+                || addrStr.ToLower().Contains(filterText)
+                || entryTypeStr.ToLower().Contains(filterText)
+            )
+            {
+                newObjectHolderEntries.Add(
+                    new ObjectHolderEntry(
+                        offset: addrStr,
+                        name: entry.Name,
+                        type: entryTypeStr,
+                        objectHolder: entry
+                    )
+                );
+            }
         }
 
         ObjectHolderEntries = new(newObjectHolderEntries);
@@ -225,9 +243,9 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
         // TODO
         dlvVM.SomeTextForNow = "soon tm view of DL " + ohe.ObjectHolder.Name;
         Debug.Assert(_file != null);
-        dlvVM.SetSegment(6, F3DZEX.Memory.Segment.FromBytes("[this object]", _file.Data));
+        dlvVM.SetSegment(_segment, F3DZEX.Memory.Segment.FromBytes("[this object]", _file.Data));
         dlvVM.SetSegment(8, EMPTY_DLIST_SEGMENT);
         Debug.Assert(_object != null);
-        dlvVM.SetSingleDlist(new SegmentedAddress(6, _object.OffsetOf(ohe.ObjectHolder)).VAddr);
+        dlvVM.SetSingleDlist(new SegmentedAddress(_segment, _object.OffsetOf(ohe.ObjectHolder)).VAddr);
     }
 }

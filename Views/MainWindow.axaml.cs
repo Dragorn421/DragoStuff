@@ -18,6 +18,7 @@ public partial class MainWindow : Window
         ViewModel = new MainWindowViewModel()
         {
             GetOpenROM = ShowDialogOpenROMAsync,
+            PickSegmentID = OpenPickSegmentID,
             OpenObjectAnalyzer = OpenObjectAnalyzer,
         };
         DataContext = ViewModel;
@@ -50,10 +51,17 @@ public partial class MainWindow : Window
         }
     }
 
+    private async Task<int?> OpenPickSegmentID()
+    {
+        var pickSegmentIDWin = new PickSegmentIDWindow();
+        int? segmentID = await pickSegmentIDWin.ShowDialog<int?>(this);
+        return segmentID;
+    }
+
     private ObjectAnalyzerWindowViewModel OpenObjectAnalyzer()
     {
         var win = new ObjectAnalyzerWindow();
-        win.Show(this);
+        win.Show();
         return win.ViewModel;
     }
 

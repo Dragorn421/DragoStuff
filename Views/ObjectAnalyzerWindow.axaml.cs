@@ -20,7 +20,7 @@ public partial class ObjectAnalyzerWindow : Window
     private void OpenDListViewer(DListViewerWindowViewModel vm)
     {
         var win = new DListViewerWindow(vm);
-        win.Show(this);
+        win.Show();
     }
 
     public void OnObjectHolderEntriesDataGridSelectionChanged(object? sender, SelectionChangedEventArgs ev)

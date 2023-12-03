@@ -31,7 +31,7 @@
             <DockPanel Grid.Column="0">
                 <DockPanel DockPanel.Dock="Top">
                     <Label DockPanel.Dock="Left" Target="FilterTextBox">Filter:</Label>
-                    <TextBox Name="FilterTextBox" />
+                    <TextBox Name="FilterTextBox" Text="{Binding FilterText}" />
                 </DockPanel>
                 <DataGrid
                     Name="ObjectHolderEntriesDataGrid"

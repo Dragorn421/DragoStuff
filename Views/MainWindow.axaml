@@ -38,7 +38,7 @@
             <TabItem Header="FS">
                 <DockPanel>
                     <Label DockPanel.Dock="Top" Target="FilterTextBox">Filter:</Label>
-                    <TextBox DockPanel.Dock="Top" Name="FilterTextBox" />
+                    <TextBox DockPanel.Dock="Top" Name="FilterTextBox" Text="{Binding FilterText}" />
                     <DataGrid ItemsSource="{Binding RomFiles}"
                         IsReadOnly="True"
                         CanUserResizeColumns="True"
