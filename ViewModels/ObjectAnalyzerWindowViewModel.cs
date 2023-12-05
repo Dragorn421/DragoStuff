@@ -13,7 +13,7 @@ namespace Z64Utils_recreate_avalonia_ui;
 
 public partial class ObjectAnalyzerWindowViewModel : ObservableObject
 {
-    public Z64Game? _game; // FIXME private after cleanup
+    private Z64Game? _game;
     private Z64File? _file;
     private int _segment;
     private Z64Object? _object;
@@ -218,6 +218,9 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
                 var bitmap = textureHolder.GetBitmap().ToAvaloniaBitmap();
                 var imageVM = new ImageOHEDViewModel()
                 {
+                    InfoText =
+                        $"{textureHolder.Name} {textureHolder.Format}"
+                        + $" {textureHolder.Width}x{textureHolder.Height}",
                     Image = bitmap,
                 };
                 ObjectHolderEntryDetailsViewModel = imageVM;

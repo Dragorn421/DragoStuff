@@ -7,5 +7,7 @@ namespace Z64Utils_recreate_avalonia_ui;
 public partial class ImageOHEDViewModel : ObservableObject, IObjectHolderEntryDetailsViewModel
 {
     [ObservableProperty]
+    private string _infoText = "";
+    [ObservableProperty]
     private IImage? _image;
 }

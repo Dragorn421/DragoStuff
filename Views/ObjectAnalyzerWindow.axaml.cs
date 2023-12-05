@@ -27,7 +27,8 @@ public partial class ObjectAnalyzerWindow : Window
     public void OnObjectHolderEntriesDataGridSelectionChanged(object? sender, SelectionChangedEventArgs ev)
     {
         var selectedItem = ObjectHolderEntriesDataGrid.SelectedItem;
-        Debug.Assert(selectedItem != null);
+        if (selectedItem == null)
+            return;
         Debug.Assert(selectedItem is ObjectAnalyzerWindowViewModel.ObjectHolderEntry);
         var ohe = (ObjectAnalyzerWindowViewModel.ObjectHolderEntry)selectedItem;
         ViewModel.OnObjectHolderEntrySelected(ohe);
