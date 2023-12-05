@@ -20,6 +20,7 @@ public abstract class OpenTKControlBaseWithCamera : OpenTKControlBase, ICustomHi
     public OpenTKControlBaseWithCamera()
     {
         Logger.Debug("Name={Name}", Name);
+        // TODO allow passing defaults to CameraHandling
         _camera = new CameraHandling();
         _camera.PropertyChanged += OnCameraPropertyChanged;
 

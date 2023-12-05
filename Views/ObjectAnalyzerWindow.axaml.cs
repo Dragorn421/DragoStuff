@@ -45,6 +45,7 @@ public partial class ObjectAnalyzerWindow : Window
         switch (rowObjectHolderEntry.ObjectHolder.GetEntryType())
         {
             case Z64.Z64Object.EntryType.DList:
+                Debug.Assert(rowObjectHolderEntry != null);
                 cm.Items.Add(
                     new MenuItem()
                     {

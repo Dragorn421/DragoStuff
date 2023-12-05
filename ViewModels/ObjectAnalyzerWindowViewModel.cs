@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using RDP;
 using Z64;
 
@@ -28,7 +29,7 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
 
     public ObjectAnalyzerWindowViewModel()
     {
-        OpenDListViewerObjectHolderEntryCommand = new CommandBase<ObjectHolderEntry>(OpenDListViewerObjectHolderEntryCommandExecute);
+        OpenDListViewerObjectHolderEntryCommand = new RelayCommand<ObjectHolderEntry>(OpenDListViewerObjectHolderEntryCommandExecute);
         PropertyChanged += (sender, e) =>
         {
             switch (e.PropertyName)
@@ -234,8 +235,9 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
 
     static private F3DZEX.Memory.Segment EMPTY_DLIST_SEGMENT = F3DZEX.Memory.Segment.FromFill("Empty Dlist", new byte[] { 0xDF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 });
 
-    private void OpenDListViewerObjectHolderEntryCommandExecute(ObjectHolderEntry ohe)
+    private void OpenDListViewerObjectHolderEntryCommandExecute(ObjectHolderEntry? ohe)
     {
+        Debug.Assert(ohe != null);
         Debug.Assert(OpenDListViewer != null);
         var dlvVM = OpenDListViewer();
         Debug.Assert(_game != null);

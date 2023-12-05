@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Z64;
 
 namespace Z64Utils_recreate_avalonia_ui;
@@ -30,7 +31,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     public MainWindowViewModel()
     {
-        OpenObjectAnalyzerRomFileCommand = new CommandBase<RomFile>(OpenObjectAnalyzerRomFileCommandExecute);
+        OpenObjectAnalyzerRomFileCommand = new RelayCommand<RomFile>(OpenObjectAnalyzerRomFileCommandExecute);
         PropertyChanged += (sender, e) =>
         {
             switch (e.PropertyName)
@@ -123,8 +124,9 @@ public partial class MainWindowViewModel : ObservableObject
 
     //
 
-    private async void OpenObjectAnalyzerRomFileCommandExecute(RomFile romFile)
+    private async void OpenObjectAnalyzerRomFileCommandExecute(RomFile? romFile)
     {
+        Debug.Assert(romFile != null);
         Debug.Assert(PickSegmentID != null);
         int? segmentID = await PickSegmentID();
         Logger.Debug("segmentID={segmentID}", segmentID);

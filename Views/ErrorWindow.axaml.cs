@@ -10,7 +10,7 @@ public partial class ErrorWindow : Window
 {
     private class CopyToClipboardCommand : ICommand
     {
-        public event EventHandler? CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged { add { } remove { } }
 
         IClipboard Clipboard;
         Func<string> GetContent;

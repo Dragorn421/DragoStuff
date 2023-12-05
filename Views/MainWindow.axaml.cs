@@ -78,6 +78,7 @@ public partial class MainWindow : Window
 
         // TODO should use some kind of "template" xaml thing for this, not code?
         var cm = new ContextMenu();
+        Debug.Assert(rowRomFile != null);
         cm.Items.Add(
             new MenuItem()
             {

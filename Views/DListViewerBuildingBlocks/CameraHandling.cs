@@ -20,17 +20,8 @@ public partial class CameraHandling : ObservableObject
 
     public CameraHandling(Vector3? camPos = null, Vector3? angle = null)
     {
-        // TODO defaults
-        if (false)
-        {
-            _camPos = camPos ?? new Vector3(200, -600, -7600);
-            _angle = angle ?? new Vector3(0, -180, 0);
-        }
-        else
-        {
-            _camPos = camPos ?? Vector3.Zero;
-            _angle = angle ?? Vector3.Zero;
-        }
+        _camPos = camPos ?? Vector3.Zero;
+        _angle = angle ?? Vector3.Zero;
         ComputeView();
     }
 
