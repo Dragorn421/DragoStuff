@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Controls.Documents;
 using Avalonia.Platform.Storage;
-using Z64;
 
 namespace Z64Utils_recreate_avalonia_ui;
 
@@ -20,6 +17,7 @@ public partial class MainWindow : Window
             GetOpenROM = ShowDialogOpenROMAsync,
             PickSegmentID = OpenPickSegmentID,
             OpenObjectAnalyzer = OpenObjectAnalyzer,
+            OpenDListViewer = OpenDListViewer,
         };
         DataContext = ViewModel;
         InitializeComponent();
@@ -61,6 +59,13 @@ public partial class MainWindow : Window
     private ObjectAnalyzerWindowViewModel OpenObjectAnalyzer()
     {
         var win = new ObjectAnalyzerWindow();
+        win.Show();
+        return win.ViewModel;
+    }
+
+    private DListViewerWindowViewModel OpenDListViewer()
+    {
+        var win = new DListViewerWindow();
         win.Show();
         return win.ViewModel;
     }

@@ -17,10 +17,11 @@ public partial class ObjectAnalyzerWindow : Window
         InitializeComponent();
     }
 
-    private void OpenDListViewer(DListViewerWindowViewModel vm)
+    private DListViewerWindowViewModel OpenDListViewer()
     {
-        var win = new DListViewerWindow(vm);
+        var win = new DListViewerWindow();
         win.Show();
+        return win.ViewModel;
     }
 
     public void OnObjectHolderEntriesDataGridSelectionChanged(object? sender, SelectionChangedEventArgs ev)

@@ -6,9 +6,9 @@ public partial class DListViewerWindow : Window
 {
     public DListViewerWindowViewModel ViewModel;
 
-    public DListViewerWindow(DListViewerWindowViewModel vm)
+    public DListViewerWindow()
     {
-        ViewModel = vm;
+        ViewModel = new();
         DataContext = ViewModel;
         InitializeComponent();
     }

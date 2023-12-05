@@ -22,7 +22,7 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
     private string _windowTitle = DEFAULT_WINDOW_TITLE;
 
     // Provided by the view
-    public Action<DListViewerWindowViewModel>? OpenDListViewer;
+    public Func<DListViewerWindowViewModel>? OpenDListViewer;
 
     public ICommand OpenDListViewerObjectHolderEntryCommand;
 
@@ -236,10 +236,10 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
 
     private void OpenDListViewerObjectHolderEntryCommandExecute(ObjectHolderEntry ohe)
     {
-        Debug.Assert(_game != null);
-        var dlvVM = new DListViewerWindowViewModel(_game);
         Debug.Assert(OpenDListViewer != null);
-        OpenDListViewer(dlvVM);
+        var dlvVM = OpenDListViewer();
+        Debug.Assert(_game != null);
+        dlvVM.Renderer = new F3DZEX.Render.Renderer(_game, new F3DZEX.Render.Renderer.Config());
         // TODO
         dlvVM.SomeTextForNow = "soon tm view of DL " + ohe.ObjectHolder.Name;
         Debug.Assert(_file != null);

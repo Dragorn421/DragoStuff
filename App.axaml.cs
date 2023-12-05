@@ -8,6 +8,8 @@ namespace Z64Utils_recreate_avalonia_ui;
 
 public partial class App : Application
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -23,21 +25,28 @@ public partial class App : Application
             win.Opened += (sender, ev) =>
             {
                 string? romPath = Program.ParsedArgs?.RomFile?.FullName;
-                Console.WriteLine($"OnFrameworkInitializationCompleted romPath={romPath}");
+                Logger.Debug("romPath={romPath}", romPath);
                 if (romPath != null)
                 {
                     win.ViewModel.OpenROM(romPath);
                     var objectAnalyzerFileNames = Program.ParsedArgs?.ObjectAnalyzerFileNames;
                     if (objectAnalyzerFileNames != null)
                     {
-                        Console.WriteLine(
-                            "OnFrameworkInitializationCompleted objectAnalyzerFileNames="
-                            + string.Join(", ", objectAnalyzerFileNames)
+                        Logger.Debug(
+                            "objectAnalyzerFileNames={objectAnalyzerFileNames}",
+                            objectAnalyzerFileNames
                         );
                         foreach (var name in objectAnalyzerFileNames)
                         {
                             // TODO un-hardcode segment 6
                             var oavm = win.ViewModel.OpenObjectAnalyzerByFileName(name, 6);
+
+                            if (oavm == null)
+                            {
+                                // TODO maybe show error window
+                                Logger.Error("Could not find an object with name {objectName}", name);
+                                continue;
+                            }
 
                             // TODO put find and analyze behind more command line args
                             // TODO don't use the Command funcs themselves?
@@ -62,7 +71,8 @@ public partial class App : Application
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"Could not find an entry with name {dListViewerOHEName}");
+                                    // TODO maybe show error window
+                                    Logger.Error("Could not find an entry with name {dListViewerOHEName}", dListViewerOHEName);
                                 }
                             }
                         }

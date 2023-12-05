@@ -1,14 +1,17 @@
 ﻿using Avalonia;
 using System;
 using System.CommandLine;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Z64Utils_recreate_avalonia_ui;
 
 class Program
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+    public static readonly string Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "UnknownVersion";
+
     public const int EXIT_SUCCESS = 0;
 
     public class ParsedArgsData
@@ -28,6 +31,8 @@ class Program
     {
         try
         {
+            Logger.Info("Starting up Z64Utils Version {Version}...", Version);
+
             int code = HandleArgs(args);
             if (code != EXIT_SUCCESS)
                 return code;
@@ -38,10 +43,12 @@ class Program
         }
         catch (Exception e)
         {
-            // TODO log to file
-            Console.WriteLine("Fatal error");
-            Console.WriteLine(e);
+            Logger.Fatal(e);
             throw;
+        }
+        finally
+        {
+            NLog.LogManager.Shutdown();
         }
     }
 

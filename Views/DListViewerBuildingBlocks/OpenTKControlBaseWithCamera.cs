@@ -10,6 +10,8 @@ namespace Z64Utils_recreate_avalonia_ui;
 
 public abstract class OpenTKControlBaseWithCamera : OpenTKControlBase, ICustomHitTest
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
     private CameraHandling _camera;
 
     protected Matrix4 Proj { get; private set; }
@@ -17,7 +19,7 @@ public abstract class OpenTKControlBaseWithCamera : OpenTKControlBase, ICustomHi
 
     public OpenTKControlBaseWithCamera()
     {
-        Console.WriteLine(Name + "(OpenTKControlBaseWithCamera).ctor");
+        Logger.Debug("Name={Name}", Name);
         _camera = new CameraHandling();
         _camera.PropertyChanged += OnCameraPropertyChanged;
 
@@ -31,7 +33,7 @@ public abstract class OpenTKControlBaseWithCamera : OpenTKControlBase, ICustomHi
         switch (e.PropertyName)
         {
             case nameof(_camera.View):
-                Console.WriteLine("OnCameraPropertyChanged View" + View);
+                Logger.Trace("view changed View={View}", View);
                 RequestNextFrameRenderingIfInitialized();
                 break;
         }
@@ -49,7 +51,7 @@ public abstract class OpenTKControlBaseWithCamera : OpenTKControlBase, ICustomHi
 
     private void UpdateProjectionMatrix()
     {
-        Console.WriteLine("UpdateProjectionMatrix WxH=" + Bounds.Width + "x" + Bounds.Height);
+        Logger.Trace("Bounds WxH={BoundsWidth}x{BoundsHeight}", Bounds.Width, Bounds.Height);
         double aspectRatio = Bounds.Width / Bounds.Height;
         if (double.IsNaN(aspectRatio) || double.IsInfinity(aspectRatio) || aspectRatio <= 0.0)
         {
@@ -71,14 +73,13 @@ public abstract class OpenTKControlBaseWithCamera : OpenTKControlBase, ICustomHi
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
-        Console.WriteLine("OnPointerReleased");
         _camera.OnMouseUp();
     }
 
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
         // TODO why is Delta a vector
-        Console.WriteLine($"OnPointerWheelChanged e.Delta={e.Delta.X},{e.Delta.Y}");
+        Logger.Trace("e.Delta={DeltaX},{DeltaY}", e.Delta.X, e.Delta.Y);
         _camera.OnMouseWheel((float)e.Delta.Y);
     }
 

@@ -1,17 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using Avalonia;
 using F3DZEX.Command;
 using F3DZEX.Render;
-using OpenTK;
 
 namespace Z64Utils_recreate_avalonia_ui;
 
 public class DLViewerControl : OpenTKControlBaseWithCamera
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
     public static readonly StyledProperty<Renderer?> RendererProperty =
         AvaloniaProperty.Register<DLViewerControl, Renderer?>(nameof(Renderer), defaultValue: null);
     public Renderer? Renderer
@@ -38,7 +38,7 @@ public class DLViewerControl : OpenTKControlBaseWithCamera
 
     public DLViewerControl()
     {
-        Console.WriteLine(Name + "(DLViewerControl).ctor");
+        Logger.Debug("Name={Name}", Name);
 
         DLists.CollectionChanged += OnDlistsCollectionChanged;
 
@@ -75,12 +75,12 @@ public class DLViewerControl : OpenTKControlBaseWithCamera
 
     protected override void OnOpenTKRender()
     {
-        Console.WriteLine(Name + "(DLViewerControl).OnOpenTKRender");
+        Logger.Trace("Name={Name}", Name);
         SetFullViewport();
 
         if (Renderer != null)
         {
-            Console.WriteLine(Name + "(DLViewerControl).OnOpenTKRender RenderStart");
+            Logger.Trace("Name={Name} RenderStart", Name);
 
             Renderer.RenderStart(Proj, View);
 
@@ -89,7 +89,7 @@ public class DLViewerControl : OpenTKControlBaseWithCamera
                 if (Renderer.RenderFailed())
                     break;
 
-                Console.WriteLine(Name + "(DLViewerControl).OnOpenTKRender RenderDList " + dList);
+                Logger.Trace("Name={Name} RenderDList({dList})", Name, dList);
                 Renderer.RenderDList(dList);
             }
 

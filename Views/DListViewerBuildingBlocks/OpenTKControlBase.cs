@@ -13,11 +13,13 @@ namespace Z64Utils_recreate_avalonia_ui;
 
 public abstract class OpenTKControlBase : OpenGlControlBase
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
     private void CheckError(GlInterface gl)
     {
         int err;
         while ((err = gl.GetError()) != GL_NO_ERROR)
-            Console.WriteLine(Name + " GLerror " + err);
+            Logger.Error("Name={Name} GLerror {err}", Name, err);
     }
 
     bool _initialized = false;
@@ -37,7 +39,7 @@ public abstract class OpenTKControlBase : OpenGlControlBase
     {
         _initialized = true;
 
-        Console.WriteLine(Name + "(OpenTKControlBase).OnOpenGlInit");
+        Logger.Debug("Name={Name}", Name);
 
         CheckError(gl);
 
@@ -71,7 +73,7 @@ public abstract class OpenTKControlBase : OpenGlControlBase
 
     protected override void OnOpenGlRender(GlInterface gl, int fb)
     {
-        Console.WriteLine(Name + "(OpenTKControlBase).OnOpenGlRender");
+        Logger.Trace("Name={Name}", Name);
 
         CheckError(gl);
 

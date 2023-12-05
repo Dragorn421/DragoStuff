@@ -1,5 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <!-- https://andrewlock.net/version-vs-versionsuffix-vs-packageversion-what-do-they-all-mean/ -->
+        <!-- https://semver.org/ -->
+        <!-- Use `dotnet build '-'-version-suffix ...` to override the version suffix when building a release. (may need rebuilding from scratch) -->
+        <VersionPrefix>2.3.0</VersionPrefix>
+        <VersionSuffix>dev</VersionSuffix>
+
         <OutputType>WinExe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
@@ -23,6 +29,8 @@
 
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 
+        <PackageReference Include="NLog" Version="5.2.7" />
+
         <!-- TODO upgrade OpenTK (using Z64Utils' current version) -->
         <PackageReference Include="OpenTK" Version="3.1.0" />
 
@@ -33,5 +41,13 @@
 
     <ItemGroup>
         <AvaloniaResource Include="Assets/**" />
+
+        <!-- TODO for some reason it's surprisingly unclear what the proper way to copy a file to the output build folder is. This may or may not be good
+            https://stackoverflow.com/questions/44374074/copy-files-to-output-directory-using-csproj-dotnetcore
+            https://learn.microsoft.com/en-us/visualstudio/msbuild/common-msbuild-project-items?view=vs-2022
+            https://stackoverflow.com/questions/58595807/what-is-the-difference-between-none-include-and-none-update-in-sdk-style-csp
+            https://learn.microsoft.com/en-us/visualstudio/msbuild/item-element-msbuild?view=vs-2022
+        -->
+        <None Update="NLog.config" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 </Project>

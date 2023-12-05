@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Controls;
-using Avalonia.Controls.Documents;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Z64;
@@ -14,7 +11,9 @@ namespace Z64Utils_recreate_avalonia_ui;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    Z64Game? _game;
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+    private Z64Game? _game;
 
     // this may not be needed on Windows, test eventually
     // bug on Linux? idk if this issue is relevant:
@@ -25,6 +24,7 @@ public partial class MainWindowViewModel : ObservableObject
     public Func<Task<IStorageFile?>>? GetOpenROM;
     public Func<Task<int?>>? PickSegmentID;
     public Func<ObjectAnalyzerWindowViewModel>? OpenObjectAnalyzer;
+    public Func<DListViewerWindowViewModel>? OpenDListViewer;
 
     public ICommand OpenObjectAnalyzerRomFileCommand;
 
@@ -58,7 +58,7 @@ public partial class MainWindowViewModel : ObservableObject
             {
                 FilePickerActive = false;
             }
-            Console.WriteLine("OpenROMCommand file=" + file?.Path.ToString());
+            Logger.Debug("file={filePath}", file?.Path.ToString());
 
             if (file == null)
             {
@@ -73,7 +73,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Logger.Error(e, "An error occured opening the ROM");
             var ewin = new ErrorWindow();
             ewin.SetMessage("An error occured opening the ROM", e.ToString());
             ewin.Show();
@@ -104,7 +104,11 @@ public partial class MainWindowViewModel : ObservableObject
     public void ImportFileNameListCommand() { }
     public void ExportFileNameListCommand() { }
 
-    public void OpenDListViewerCommand() { }
+    public void OpenDListViewerCommand()
+    {
+        Debug.Assert(OpenDListViewer != null);
+        OpenDListViewer();
+    }
     public void F3DZEXDisassemblerCommand() { }
     public void ROMRAMConversionsCommand() { }
     public void TextureViewerCommand() { }
@@ -123,7 +127,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         Debug.Assert(PickSegmentID != null);
         int? segmentID = await PickSegmentID();
-        Console.WriteLine("OpenObjectAnalyzerRomFileCommandExecute segmentID=" + segmentID);
+        Logger.Debug("segmentID={segmentID}", segmentID);
         if (segmentID != null)
             OpenObjectAnalyzerByZ64File(romFile.File, (int)segmentID);
     }
@@ -137,11 +141,14 @@ public partial class MainWindowViewModel : ObservableObject
         return objectAnalyzerVM;
     }
 
-    public ObjectAnalyzerWindowViewModel OpenObjectAnalyzerByFileName(string name, int segment)
+    public ObjectAnalyzerWindowViewModel? OpenObjectAnalyzerByFileName(string name, int segment)
     {
         Debug.Assert(_game != null);
         var file = _game.GetFileByName(name);
-        return OpenObjectAnalyzerByZ64File(file, segment);
+        if (file == null)
+            return null;
+        else
+            return OpenObjectAnalyzerByZ64File(file, segment);
     }
 
     //

@@ -1,16 +1,17 @@
 using System;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Z64;
 
 namespace Z64Utils_recreate_avalonia_ui;
 
 public partial class DListViewerWindowViewModel : ObservableObject
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
     [ObservableProperty]
     private string _someTextForNow = "hey";
     [ObservableProperty]
-    private F3DZEX.Render.Renderer _renderer;
+    public F3DZEX.Render.Renderer? _renderer;
     [ObservableProperty]
     private ObservableCollection<F3DZEX.Command.Dlist> _dLists = new();
     [ObservableProperty]
@@ -18,16 +19,26 @@ public partial class DListViewerWindowViewModel : ObservableObject
     [ObservableProperty]
     private string? _renderError;
 
-    private Z64Game _game;
-
-    public DListViewerWindowViewModel(Z64Game game)
+    public DListViewerWindowViewModel()
     {
-        _game = game;
-        Renderer = new F3DZEX.Render.Renderer(_game, new F3DZEX.Render.Renderer.Config());
+        PropertyChanged += (sender, e) =>
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(Renderer):
+                    DLists.Clear();
+                    DecodeError = null;
+                    RenderError = null;
+                    break;
+            }
+        };
     }
 
     public void SetSegment(int index, F3DZEX.Memory.Segment segment)
     {
+        if (Renderer == null)
+            throw new Exception("Renderer is null");
+
         if (index >= 0 && index < F3DZEX.Memory.Segment.COUNT)
         {
             Renderer.Memory.Segments[index] = segment;
@@ -38,7 +49,10 @@ public partial class DListViewerWindowViewModel : ObservableObject
 
     public void SetSingleDlist(uint vaddr)
     {
-        Console.WriteLine("DListViewerWindowViewModel.SetSingleDlist");
+        if (Renderer == null)
+            throw new Exception("Renderer is null");
+
+        Logger.Debug("vaddr={vaddr}", vaddr);
 
         F3DZEX.Command.Dlist? dList;
         try
