@@ -50,20 +50,26 @@ public abstract class OpenTKControlBase : OpenGlControlBase
         CheckError(gl);
     }
 
-    // FIXME hack
-    delegate IntPtr glXGetCurrentContext_delegate();
+    // FIXME hack. only fixable by upgrading OpenTK
+    private static bool _isOpenTKBindingsLoaded = false;
     private void LoadOpenTKBindings(GlInterface gl)
     {
+        if (_isOpenTKBindingsLoaded)
+            return;
+
         GraphicsContext.GetAddressDelegate getAddress =
             function => gl.GetProcAddress(function);
 
-        IntPtr p_glXGetCurrentContext = getAddress("glXGetCurrentContext");
-        Debug.Assert(p_glXGetCurrentContext != IntPtr.Zero);
-        var glXGetCurrentContext = (glXGetCurrentContext_delegate)Marshal.GetDelegateForFunctionPointer(p_glXGetCurrentContext, typeof(glXGetCurrentContext_delegate));
         GraphicsContext.GetCurrentContextDelegate getCurrent =
-            () => new ContextHandle(glXGetCurrentContext());
+            () => new ContextHandle(new IntPtr(421));
 
+        // The only thing that matters is reaching implementation.LoadAll();
+        // which is called in the constructor.
+        // OpenTK is not responsible for any context management here, Avalonia is.
+        // This is why we can return a bogus context for GetCurrentContextDelegate.
         new GraphicsContext(ContextHandle.Zero, getAddress, getCurrent);
+
+        _isOpenTKBindingsLoaded = true;
     }
 
     protected override void OnOpenGlDeinit(GlInterface gl)
