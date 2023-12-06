@@ -227,11 +227,13 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
                 break;
 
             default:
-                var textVM = new TextOHEDViewModel()
+                Debug.Assert(_object != null);
+                var hexVM = new HexViewModel()
                 {
-                    Text = "OnObjectHolderEntrySelected " + ohe.ObjectHolder.Name,
+                    DataBytes = ohe.ObjectHolder.GetData(),
+                    FirstByteAddress = (uint)_object.OffsetOf(ohe.ObjectHolder),
                 };
-                ObjectHolderEntryDetailsViewModel = textVM;
+                ObjectHolderEntryDetailsViewModel = hexVM;
                 break;
         }
     }
