@@ -75,14 +75,16 @@ public class DLViewerControl : OpenTKControlBaseWithCamera
 
     protected override void OnOpenTKRender()
     {
-        Logger.Trace("Name={Name}", Name);
+        Logger.Trace("Name={Name} in", Name);
         SetFullViewport();
 
         if (Renderer != null)
         {
-            Logger.Trace("Name={Name} RenderStart", Name);
+            Logger.Trace("Name={Name} RenderStart...", Name);
 
             Renderer.RenderStart(Proj, View);
+
+            Logger.Trace("Name={Name} RenderStart OK", Name);
 
             foreach (var dList in DLists)
             {
@@ -91,6 +93,7 @@ public class DLViewerControl : OpenTKControlBaseWithCamera
 
                 Logger.Trace("Name={Name} RenderDList({dList})", Name, dList);
                 Renderer.RenderDList(dList);
+                Logger.Trace("Name={Name} RenderDList OK", Name);
             }
 
 
@@ -105,5 +108,7 @@ public class DLViewerControl : OpenTKControlBaseWithCamera
                 RenderError = null;
             }
         }
+
+        Logger.Trace("Name={Name} out", Name);
     }
 }

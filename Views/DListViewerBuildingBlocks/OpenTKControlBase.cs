@@ -39,15 +39,25 @@ public abstract class OpenTKControlBase : OpenGlControlBase
     {
         _initialized = true;
 
-        Logger.Debug("Name={Name}", Name);
+        Logger.Debug("Name={Name} in", Name);
 
         CheckError(gl);
 
         LoadOpenTKBindings(gl);
         CheckError(gl);
 
-        OnOpenTKInit();
+        try
+        {
+            OnOpenTKInit();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, "Unhandled exception raised from OnOpenTKInit");
+            throw;
+        }
         CheckError(gl);
+
+        Logger.Debug("Name={Name} out", Name);
     }
 
     // FIXME hack. only fixable by upgrading OpenTK
@@ -79,12 +89,22 @@ public abstract class OpenTKControlBase : OpenGlControlBase
 
     protected override void OnOpenGlRender(GlInterface gl, int fb)
     {
-        Logger.Trace("Name={Name}", Name);
+        Logger.Trace("Name={Name} in", Name);
 
         CheckError(gl);
 
-        OnOpenTKRender();
+        try
+        {
+            OnOpenTKRender();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e, "Unhandled exception raised from OnOpenTKRender");
+            throw;
+        }
         CheckError(gl);
+
+        Logger.Trace("Name={Name} out", Name);
     }
 
     protected PixelSize GetPixelSize()

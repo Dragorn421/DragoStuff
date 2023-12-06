@@ -49,5 +49,6 @@
             https://learn.microsoft.com/en-us/visualstudio/msbuild/item-element-msbuild?view=vs-2022
         -->
         <None Update="NLog.config" CopyToOutputDirectory="PreserveNewest" />
+        <None Update="Shaders/*" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 </Project>
