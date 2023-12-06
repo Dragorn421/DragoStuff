@@ -1,0 +1,47 @@
+name: Compile
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        target-runtime: [linux-x64, win-x64]
+        configuration: [Debug, Release]
+
+    name: Z64Utils-${{ matrix.target-runtime }}-${{ matrix.configuration }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: dotnet restore
+        shell: bash
+        run: |
+          dotnet restore --runtime ${{ matrix.target-runtime }}
+
+      - name: dotnet build
+        shell: bash
+        run: |
+          dotnet build --no-restore --no-self-contained --runtime ${{ matrix.target-runtime }} --configuration ${{ matrix.configuration }} --version-suffix ${{ github.sha }}
+
+      - name: dotnet publish
+        shell: bash
+        run: |
+          dotnet publish --no-build --output publish_out/ --no-self-contained --runtime ${{ matrix.target-runtime }} --configuration ${{ matrix.configuration }} --version-suffix ${{ github.sha }}
+
+      # Archive
+      - name: Create archive
+        shell: bash
+        run: |
+          cp -r -t publish_out/ Z64Utils-Config-master/versions
+          cd publish_out
+          tar -czvf ../Z64Utils-${{ matrix.target-runtime }}-${{ matrix.configuration }}-${{ github.sha }}.tar.gz *
+
+      - name: Upload archive
+        uses: actions/upload-artifact@v3
+        with:
+          name: Z64Utils-${{ matrix.target-runtime }}-${{ matrix.configuration }}-${{ github.sha }}
+          path: |
+            Z64Utils-${{ matrix.target-runtime }}-${{ matrix.configuration }}-${{ github.sha }}.tar.gz
