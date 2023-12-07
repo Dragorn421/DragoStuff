@@ -12,7 +12,7 @@ namespace F3DZEX.Render
     {
         public SimpleVertexDrawer()
         {
-            _shader = new ShaderHandler(File.ReadAllText("Shaders/simpleVtx.vert"), File.ReadAllText("Shaders/coloredVtx.frag"));
+            _shader = ShaderHandler.FromSrcFilesInShadersDir("simpleVtx.vert", "coloredVtx.frag");
             _attrs = new VertexAttribs();
 
             _attrs.LayoutAddFloat(3, VertexAttribPointerType.Float, false);

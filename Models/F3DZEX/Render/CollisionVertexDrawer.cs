@@ -9,7 +9,7 @@ namespace F3DZEX.Render
     {
         public CollisionVertexDrawer()
         {
-            _shader = new ShaderHandler(File.ReadAllText("Shaders/collisionVtx.vert"), File.ReadAllText("Shaders/collisionVtx.frag"));
+            _shader = ShaderHandler.FromSrcFilesInShadersDir("collisionVtx.vert", "collisionVtx.frag");
             _attrs = new VertexAttribs();
 
             _attrs.LayoutAddFloat(3, VertexAttribPointerType.Float, false);

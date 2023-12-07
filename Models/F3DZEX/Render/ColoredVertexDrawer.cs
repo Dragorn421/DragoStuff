@@ -11,7 +11,7 @@ namespace F3DZEX.Render
     {
         public ColoredVertexDrawer()
         {
-            _shader = new ShaderHandler(File.ReadAllText("Shaders/coloredVtx.vert"), File.ReadAllText("Shaders/coloredVtx.frag"));
+            _shader = ShaderHandler.FromSrcFilesInShadersDir("coloredVtx.vert", "coloredVtx.frag");
             _attrs = new VertexAttribs();
             // pos
             _attrs.LayoutAddFloat(3, VertexAttribPointerType.Float, false);

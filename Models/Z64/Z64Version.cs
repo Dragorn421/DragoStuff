@@ -264,9 +264,9 @@ namespace Z64
         private static Dictionary<string, Z64Version> _versions;
         private static void LoadVersions()
         {
-            string path = Path.GetFullPath("versions");
+            string path = Path.GetFullPath(Path.Join(AppContext.BaseDirectory, "versions"));
             if (!Directory.Exists(path))
-                throw new Exception($"Could not load config files (\"{path}/*.json\").");
+                throw new Exception($"Could not load config files (missing versions folder \"{path}\").");
 
             var files = Directory.GetFiles(path, "*.json");
             if (files.Length == 0)

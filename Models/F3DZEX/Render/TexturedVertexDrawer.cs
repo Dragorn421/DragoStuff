@@ -12,7 +12,7 @@ namespace F3DZEX.Render
     {
         public TexturedVertexDrawer()
         {
-            _shader = new ShaderHandler(File.ReadAllText("Shaders/texturedVtx.vert"), File.ReadAllText("Shaders/texturedVtx.frag"));
+            _shader = ShaderHandler.FromSrcFilesInShadersDir("texturedVtx.vert", "texturedVtx.frag");
             _attrs = new VertexAttribs();
 
             // pos
