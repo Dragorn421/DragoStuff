@@ -1,10 +1,16 @@
 wip port of Z64Utils to avalonia (from windows forms thing)
 
-tip: change the cwd to its own folder:
-mkdir launch_cwd
-ln -sd ../Z64Utils-Config-master/versions/ launch_cwd/versions
-ln -sd ../Models/Shaders/ launch_cwd/Shaders
-if using vscode, cf launch.json to change the cwd
+tip: copying versions isn't part of csproj because I haven't figure out what to do with versions data yet
+if using vs code, you can change the debug launch config with `"preLaunchTask": "build_and_cp_versions",`
+and create task build_and_cp_versions as:
+```json
+{
+    "label": "build_and_cp_versions",
+    "dependsOn": "build",
+    "command": "cp -r -t bin/Debug/net6.0 Z64Utils-Config-master/versions",
+    "type": "shell",
+}
+```
 
 tip: run z64utils with arguments to directly open something
 "args": "--rom /home/dragorn421/Documents/oot/baserom.z64 --object-analyzer object_box",
@@ -13,3 +19,4 @@ if using vscode, cf launch.json
 build instructions on ubuntu (iirc):
 apt install dotnet-sdk-7.0
 dotnet build
+see also: the GHA config file under .github/
