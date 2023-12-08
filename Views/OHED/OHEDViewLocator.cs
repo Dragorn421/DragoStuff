@@ -29,6 +29,9 @@ public class OHEDViewLocator : IDataTemplate
             case nameof(HexViewModel):
                 return new HexView();
 
+            case nameof(VertexArrayOHEDViewModel):
+                return new VertexArrayOHEDView();
+
             default:
                 throw new NotImplementedException(
                     "Unknown View for the IObjectHolderEntryDetailsViewModel: "

@@ -3,9 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Input;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OpenTK.Graphics.OpenGL;
 using RDP;
 using Z64;
 
@@ -13,6 +16,8 @@ namespace Z64Utils_recreate_avalonia_ui;
 
 public partial class ObjectAnalyzerWindowViewModel : ObservableObject
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
     private Z64Game? _game;
     private Z64File? _file;
     private int _segment;
@@ -224,6 +229,41 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
                     Image = bitmap,
                 };
                 ObjectHolderEntryDetailsViewModel = imageVM;
+                break;
+
+            case Z64Object.EntryType.Vertex:
+                var vertexHolder = (Z64Object.VertexHolder)ohe.ObjectHolder;
+                Debug.Assert(_object != null);
+                uint vertexHolderAddress = new SegmentedAddress(_segment, _object.OffsetOf(vertexHolder)).VAddr;
+                var vertexArrayVM = new VertexArrayOHEDViewModel()
+                {
+                    Vertices = new(
+                        vertexHolder.Vertices.Select(
+                            (v, i) => new VertexArrayOHEDViewModel.VertexEntry(
+                                index: i,
+                                address: vertexHolderAddress + (uint)i * Z64Object.VertexHolder.VERTEX_SIZE,
+                                coordX: v.X,
+                                coordY: v.Y,
+                                coordZ: v.Z,
+                                texCoordS: v.TexX,
+                                texCoordT: v.TexY,
+                                colorRorNormalX: v.R,
+                                colorGorNormalY: v.G,
+                                colorBorNormalZ: v.B,
+                                alpha: v.A
+                            )
+                        )
+                    ),
+                };
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    var t1 = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    // Loading this view is a bit slow
+                    // Setting it in another task slightly improves the feeling of responsiveness
+                    ObjectHolderEntryDetailsViewModel = vertexArrayVM;
+                    var t2 = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    Logger.Trace("ObjectHolderEntryDetailsViewModel = vertexArrayVM; t2-t1={0}ms", t2 - t1);
+                });
                 break;
 
             default:

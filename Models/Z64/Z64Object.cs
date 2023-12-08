@@ -99,6 +99,8 @@ namespace Z64
         }
         public class VertexHolder : ObjectHolder
         {
+            public const int VERTEX_SIZE = 0x10;
+
             public List<Vertex> Vertices { get; set; }
 
             public VertexHolder(string name, List<Vertex> vtx) : base(name) => Vertices = vtx;
@@ -106,10 +108,10 @@ namespace Z64
             public override EntryType GetEntryType() => EntryType.Vertex;
             public override void SetData(byte[] data)
             {
-                if (data.Length % 0x10 != 0)
+                if (data.Length % VERTEX_SIZE != 0)
                     throw new Z64ObjectException($"Invalid size for a vertex buffer (0x{data.Length:X})");
 
-                int count = data.Length / 0x10;
+                int count = data.Length / VERTEX_SIZE;
 
                 Vertices = new List<Vertex>();
                 using (MemoryStream ms = new MemoryStream(data))

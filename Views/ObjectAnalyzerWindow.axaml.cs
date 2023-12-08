@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Avalonia.Controls;
 
@@ -5,6 +6,8 @@ namespace Z64Utils_recreate_avalonia_ui;
 
 public partial class ObjectAnalyzerWindow : Window
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
     public ObjectAnalyzerWindowViewModel ViewModel;
 
     public ObjectAnalyzerWindow()
@@ -31,7 +34,10 @@ public partial class ObjectAnalyzerWindow : Window
             return;
         Debug.Assert(selectedItem is ObjectAnalyzerWindowViewModel.ObjectHolderEntry);
         var ohe = (ObjectAnalyzerWindowViewModel.ObjectHolderEntry)selectedItem;
+        var t1 = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         ViewModel.OnObjectHolderEntrySelected(ohe);
+        var t2 = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        Logger.Trace("ViewModel.OnObjectHolderEntrySelected(ohe); t2-t1={0}ms", t2-t1);
     }
 
     public void OnObjectHolderEntriesDataGridLoadingRow(object? sender, DataGridRowEventArgs ev)
