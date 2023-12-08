@@ -1,9 +1,21 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:avalonia_datagrid_perf"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="avalonia_datagrid_perf.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
         Title="avalonia_datagrid_perf">
-    Welcome to Avalonia!
+    <DockPanel>
+        <Button DockPanel.Dock="Top" Click="DataButtonClick">data with IsVisible binding</Button>
+        <Button DockPanel.Dock="Top" Click="DataNoIsVisibleBindingButtonClick">data without IsVisible binding</Button>
+        <Button DockPanel.Dock="Top" Click="TextButtonClick">text</Button>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding Text}" />
+        <ContentControl Content="{Binding SubViewModel}">
+            <ContentControl.DataTemplates>
+                <vm:SubViewLocator />
+            </ContentControl.DataTemplates>
+        </ContentControl>
+    </DockPanel>
 </Window>

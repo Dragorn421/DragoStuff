@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:avalonia_datagrid_perf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="avalonia_datagrid_perf.DataGridViewNoIsVisibleBinding"
+    x:DataType="vm:DataGridViewModelNoIsVisibleBinding"
+>
+    <DataGrid ItemsSource="{Binding ValsData}"
+        IsReadOnly="True"
+        CanUserResizeColumns="True"
+        GridLinesVisibility="All"
+    >
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+            <DataGridTextColumn Header="Val0" Binding="{Binding Val0}" />
+        </DataGrid.Columns>
+    </DataGrid>
+</UserControl>
