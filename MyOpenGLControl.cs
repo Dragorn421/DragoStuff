@@ -16,12 +16,12 @@ public class MyOpenGLControl : OpenGlControlBase
         bool anyError = false;
         while ((err = gl.GetError()) != GL_NO_ERROR)
         {
-            Debug.WriteLine(Name + ".CheckError " + err);
+            Console.WriteLine(Name + ".CheckError " + err);
             anyError = true;
         }
         if (!anyError)
         {
-            Debug.WriteLine(Name + ".CheckError OK");
+            Console.WriteLine(Name + ".CheckError OK");
         }
     }
 
@@ -30,7 +30,7 @@ public class MyOpenGLControl : OpenGlControlBase
 
     protected override void OnOpenGlInit(GlInterface gl)
     {
-        Debug.WriteLine(Name + ".OnOpenGlInit");
+        Console.WriteLine(Name + ".OnOpenGlInit");
         CheckError(gl);
 
         // Setup for drawing a triangle
@@ -79,7 +79,7 @@ public class MyOpenGLControl : OpenGlControlBase
         int vertexShader = gl.CreateShader(GL_VERTEX_SHADER);
 
         var vertexShaderError = gl.CompileShaderAndGetError(vertexShader, vertexShaderSource);
-        Debug.WriteLine("vertexShaderError: " + vertexShaderError);
+        Console.WriteLine("vertexShaderError: " + vertexShaderError);
 
         string fragmentShaderSource = @"
             #version 330 core
@@ -94,7 +94,7 @@ public class MyOpenGLControl : OpenGlControlBase
         int fragmentShader = gl.CreateShader(GL_FRAGMENT_SHADER);
 
         var fragmentShaderError = gl.CompileShaderAndGetError(fragmentShader, fragmentShaderSource);
-        Debug.WriteLine("fragmentShaderError: " + fragmentShaderError);
+        Console.WriteLine("fragmentShaderError: " + fragmentShaderError);
 
         ShaderProgram = gl.CreateProgram();
 
@@ -102,7 +102,7 @@ public class MyOpenGLControl : OpenGlControlBase
         gl.AttachShader(ShaderProgram, fragmentShader);
 
         var shaderProgramError = gl.LinkProgramAndGetError(ShaderProgram);
-        Debug.WriteLine("shaderProgramError: " + shaderProgramError);
+        Console.WriteLine("shaderProgramError: " + shaderProgramError);
 
         gl.VertexAttribPointer(0, 3, GL_FLOAT, 0, 3 * sizeof(float), IntPtr.Zero);
         gl.EnableVertexAttribArray(0);
@@ -126,18 +126,18 @@ public class MyOpenGLControl : OpenGlControlBase
 
     protected override void OnOpenGlDeinit(GlInterface gl)
     {
-        Debug.WriteLine(Name + ".OnOpenGlDeinit");
+        Console.WriteLine(Name + ".OnOpenGlDeinit");
         CheckError(gl);
     }
 
     protected override void OnOpenGlLost()
     {
-        Debug.WriteLine(Name + ".OnOpenGlLost");
+        Console.WriteLine(Name + ".OnOpenGlLost");
     }
 
     protected override void OnOpenGlRender(GlInterface gl, int fb)
     {
-        Debug.WriteLine(Name + ".OnOpenGlRender");
+        Console.WriteLine(Name + ".OnOpenGlRender");
         CheckError(gl);
 
         gl.ClearColor(0.0f, 0.3f, 0.0f, 1.0f);
@@ -152,7 +152,7 @@ public class MyOpenGLControl : OpenGlControlBase
                 my_glGetIntegerv(GL_VIEWPORT, p_prevViewport);
             }
         }
-        Debug.WriteLine("prevViewport=" + string.Join(",", prevViewport));
+        Console.WriteLine("prevViewport=" + string.Join(",", prevViewport));
 
         // Set viewport to full size
         // Running this in OnOpenGlRender also means the drawing is stretched to the window size on resize
@@ -163,7 +163,7 @@ public class MyOpenGLControl : OpenGlControlBase
         // This mimics (private) method OpenGlControlBase.GetPixelSize
         int pixelWidth = (int)(Bounds.Width * VisualRoot.RenderScaling);
         int pixelHeight = (int)(Bounds.Height * VisualRoot.RenderScaling);
-        Debug.WriteLine($"pixelSize={pixelWidth}x{pixelHeight}");
+        Console.WriteLine($"pixelSize={pixelWidth}x{pixelHeight}");
         gl.Viewport(0, 0, pixelWidth, pixelHeight);
 
         // Draw triangle
