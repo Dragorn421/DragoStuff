@@ -409,7 +409,7 @@ namespace Z64
         private static void ExportHashes(Z64Game game)
         {
 #if DEBUG
-            string hashPath = "hashes.txt";
+            string hashPath = Path.Join(AppContext.BaseDirectory, "hashes.txt");
             var entries = FileHashEntry.ReadEntries(hashPath);
             int addCount = 0;
             int modifCount = 0;
@@ -463,7 +463,7 @@ namespace Z64
         private static void ImportHashes(Z64Game game)
         {
 #if DEBUG
-            var entries = FileHashEntry.ReadEntries("hashes.txt");
+            var entries = FileHashEntry.ReadEntries(Path.Join(AppContext.BaseDirectory, "hashes.txt"));
 
             int foundCount = 0;
 
