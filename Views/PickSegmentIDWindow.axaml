@@ -9,12 +9,18 @@
     Title="Pick Segment ID"
     SizeToContent="WidthAndHeight"
 >
-    <DockPanel>
-        <TextBlock DockPanel.Dock="Top">Please enter a segment id.</TextBlock>
-        <TextBlock DockPanel.Dock="Top" IsVisible="{Binding InvalidSegmentID}">Segment ID must be a
-            value between 0 and 15.</TextBlock>
-        <Button DockPanel.Dock="Right" Click="OnOKButtonClick"
-            IsEnabled="{Binding !InvalidSegmentID}">OK</Button>
-        <TextBox Text="{Binding SegmentIDStr}" />
-    </DockPanel>
+    <StackPanel Orientation="Vertical">
+        <TextBlock Margin="5">Please enter a segment id.</TextBlock>
+        <DockPanel>
+            <Button DockPanel.Dock="Right" Margin="5"
+                Click="OnOKButtonClick" IsDefault="True"
+                IsEnabled="{Binding !InvalidSegmentID}">OK</Button>
+            <TextBox Margin="5" Name="SegmentIDStrTextBox"
+                Text="{Binding SegmentIDStr}" />
+        </DockPanel>
+        <TextBlock Margin="5" IsVisible="{Binding InvalidSegmentID}"
+            TextWrapping="Wrap">
+            Segment ID must be a value between 0 and 15.
+        </TextBlock>
+    </StackPanel>
 </Window>

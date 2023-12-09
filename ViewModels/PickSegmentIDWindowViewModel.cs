@@ -5,6 +5,8 @@ namespace Z64Utils_recreate_avalonia_ui;
 
 public partial class PickSegmentIDWindowViewModel : ObservableObject
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
     [ObservableProperty]
     private string _segmentIDStr = "6";
     [ObservableProperty]
@@ -26,7 +28,7 @@ public partial class PickSegmentIDWindowViewModel : ObservableObject
             {
                 segmentID = null;
             }
-            if (segmentID != null)
+            if (segmentID == null)
             {
                 try
                 {
@@ -37,7 +39,7 @@ public partial class PickSegmentIDWindowViewModel : ObservableObject
                     segmentID = null;
                 }
             }
-            if (segmentID >= 0 && segmentID <= 15)
+            if (segmentID != null && segmentID >= 0 && segmentID <= 15)
             {
                 return segmentID;
             }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -52,7 +53,8 @@ public partial class MainWindow : Window
     private async Task<int?> OpenPickSegmentID()
     {
         var pickSegmentIDWin = new PickSegmentIDWindow();
-        int? segmentID = await pickSegmentIDWin.ShowDialog<int?>(this);
+        var dialogResultTask = pickSegmentIDWin.ShowDialog<int?>(this);
+        int? segmentID = await dialogResultTask;
         return segmentID;
     }
 
