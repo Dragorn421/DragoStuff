@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+
 ./z64compress/z64compress \
 --in "./oot_u10.decompressed.z64" \
 --out "oot_u10.recompressed_z64compress.z64" \
@@ -21,3 +22,4 @@
 --skip "1521" --skip "1522" --skip "1523" --skip "1524" --skip "1525"
 
 diff oot_u10.z64 oot_u10.recompressed_z64compress.z64 -s
+diff -u <(xxd oot_u10.z64) <(xxd oot_u10.recompressed_z64compress.z64) | head

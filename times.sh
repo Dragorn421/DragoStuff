@@ -1,5 +1,6 @@
 #!/bin/sh
 my_time () {
+    echo "$@" >> times_out.txt
     /bin/time -f '%Uuser %Ssystem %Eelapsed' -a -o times_out.txt $@
 }
 echo Start > times_out.txt
