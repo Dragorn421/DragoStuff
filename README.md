@@ -9,6 +9,9 @@ git submodule update --init --recursive
 cd z64compress && make && cd ..  # build z64compress
 cd z64decompress && make && cd ..  # build z64decompress
 make  # build cwrapcrunch64.so
+python3 -m venv .venv  # create venv
+. .venv/bin/activate  # activate venv
+python3 -m pip install -r requirements.txt  # install python deps
 ./cprom.sh path_to_rom_oot_u10.z64  # checksum should match
 ./decompress.sh  # generates oot_u10.decompressed.z64
 ```
@@ -16,6 +19,7 @@ make  # build cwrapcrunch64.so
 Compare compression:
 
 ```sh
+. .venv/bin/activate  # activate venv
 ./compress_z64compress.sh  # generates oot_u10.recompressed_z64compress.z64, should match oot_u10.z64
 ./compress_pyromcompress_crunch64.sh  # generates oot_u10.recompressed_py.z64, should match oot_u10.z64 (besides the 8 bytes checksum in the rom header)
 ./times.sh  # runs and times the last two scripts a few times, writes times to times_out.txt
