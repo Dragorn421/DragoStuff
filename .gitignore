@@ -1,0 +1,7 @@
+*.z64
+times_out.txt
+*.so
+cprof_pycomp.txt
+*.pickle
+.venv
+.vscode
