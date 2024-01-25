@@ -1,11 +1,16 @@
-Name: The Withering Mind
+Title: The Withering Mind
+
 Author: Asahi
 
 100% playthrough: https://www.youtube.com/watch?v=5WFZp4eWJ7E
 
 Time to beat: around one hour.
 
-My review:
+# Events summary
+
+Adult Link spawns in an undefined area split into rooms. He is guided by notes which give hints. He often has to backtrack or go in loops to use newly acquired items in previous rooms. Eventually after finding the boss key in the chandelier, he finds who left the notes: a wizzrobe, who now attacks him. After defeating the enemies, Link finds an exit to the outside world. Escape successful! (TODO rewatch my playthrough and expand summary)
+
+# Review
 
 **Story**: [=] Generic and okay.
 
@@ -23,7 +28,7 @@ There are loops and revisiting rooms, but it's really not a chore like it may so
 
 Treasure map, good hints, bombable walls/floor, a "non-euclidean geometry" bit, optional lens treasure hunt. I didn't immediately get where the "X marks the spot" map was pointing, had to come back to it, and really liked the discreet arrow then when searching the library. I haven't been in a state of "what do I do know" / hitting a wall at all.
 
-**Graphics quality**: [-] Functional-mediocre. (note: this is a harsh judgement but I want to be able to compare the different mods)
+**Graphics**: [-] Functional-mediocre. (note: this is a harsh judgement but I want to be able to compare the different mods)
 
 Besides the one area with a flame (behind hammer-broken blocks in the room the door under the stairs leads to) the coloring/lighting is absent afaict. The textures aren't too varied within a single room and I think most uvs are not scaled up enough (textures appear too large). However each room definitely had its own visual identity which helps a lot with remembering what was where. I like the effort with the tables and chandelier models, they look cool.
 
