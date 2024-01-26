@@ -2,6 +2,8 @@ Title: The Withering Mind
 
 Author: Asahi
 
+Revision I played: `asahi_the-withering-mind.bps` at 0f547a162424868f91c749483c7f38ec136e48f5
+
 100% playthrough: https://www.youtube.com/watch?v=5WFZp4eWJ7E
 
 Time to beat: around one hour.

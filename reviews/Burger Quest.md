@@ -2,6 +2,8 @@ Title: Burger Quest
 
 Author: skippye
 
+Revision I played: `skip_burger-quest.bps` at 0f547a162424868f91c749483c7f38ec136e48f5
+
 Playthrough: https://www.youtube.com/watch?v=PWt6V_x3Urk
 
 Time to beat: 30 minutes to several hours (there is a puzzle many get stuck on)
