@@ -20,3 +20,9 @@ build instructions on ubuntu (iirc):
 apt install dotnet-sdk-7.0
 dotnet build
 see also: the GHA config file under .github/
+
+Ubuntu 24.04:
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#ubuntu-net-backports-package-repository
+add-apt-repository ppa:dotnet/backports
+apt install dotnet-sdk-6.0
+dotnet build
