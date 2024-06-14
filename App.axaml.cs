@@ -72,7 +72,30 @@ public partial class App : Application
                                 else
                                 {
                                     // TODO maybe show error window
-                                    Logger.Error("Could not find an entry with name {dListViewerOHEName}", dListViewerOHEName);
+                                    Logger.Error("Could not find an entry with name {0}", dListViewerOHEName);
+                                }
+                            }
+
+                            var skeletonViewerOHEName = Program.ParsedArgs?.SkeletonViewerOHEName;
+                            if (skeletonViewerOHEName != null)
+                            {
+                                ObjectAnalyzerWindowViewModel.ObjectHolderEntry? ohe;
+                                try
+                                {
+                                    ohe = oavm.ObjectHolderEntries.First(ohe => ohe.ObjectHolder.Name == skeletonViewerOHEName);
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                    ohe = null;
+                                }
+                                if (ohe != null)
+                                {
+                                    oavm.OpenSkeletonViewerObjectHolderEntryCommand.Execute(ohe);
+                                }
+                                else
+                                {
+                                    // TODO maybe show error window
+                                    Logger.Error("Could not find an entry with name {0}", skeletonViewerOHEName);
                                 }
                             }
                         }

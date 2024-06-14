@@ -19,6 +19,7 @@ class Program
         public FileInfo? RomFile;
         public string[]? ObjectAnalyzerFileNames;
         public string? DListViewerOHEName;
+        public string? SkeletonViewerOHEName;
     }
 
     public static ParsedArgsData? ParsedArgs = null;
@@ -91,21 +92,28 @@ class Program
             // TODO should really be by offset but it's impractical with the exposed Z64Object info
             description: "Open a DList in the object, by name, in the dlist viewer."
         );
+        var skeletonViewerOption = new Option<string>(
+            name: "--skeleton-viewer",
+            // TODO should really be by offset but it's impractical with the exposed Z64Object info
+            description: "Open a skeleton in the object, by name, in the skeleton viewer."
+        );
 
         var rootCommand = new RootCommand("Z64Utils");
         rootCommand.AddOption(romFileOption);
         rootCommand.AddOption(objectAnalyzerOption);
         rootCommand.AddOption(dListViewerOption);
+        rootCommand.AddOption(skeletonViewerOption);
 
         ParsedArgs = new();
         rootCommand.SetHandler(
-            (file, names, dlName) =>
+            (file, names, dlName, skeletonName) =>
             {
                 ParsedArgs.RomFile = file;
                 ParsedArgs.ObjectAnalyzerFileNames = names;
                 ParsedArgs.DListViewerOHEName = dlName;
+                ParsedArgs.SkeletonViewerOHEName = skeletonName;
             },
-            romFileOption, objectAnalyzerOption, dListViewerOption);
+            romFileOption, objectAnalyzerOption, dListViewerOption, skeletonViewerOption);
 
         int code = rootCommand.Invoke(args);
         return code;

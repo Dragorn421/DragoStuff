@@ -15,6 +15,7 @@ public partial class ObjectAnalyzerWindow : Window
         ViewModel = new ObjectAnalyzerWindowViewModel()
         {
             OpenDListViewer = OpenDListViewer,
+            OpenSkeletonViewer = OpenSkeletonViewer,
         };
         DataContext = ViewModel;
         InitializeComponent();
@@ -23,6 +24,13 @@ public partial class ObjectAnalyzerWindow : Window
     private DListViewerWindowViewModel OpenDListViewer()
     {
         var win = new DListViewerWindow();
+        win.Show();
+        return win.ViewModel;
+    }
+
+    private SkeletonViewerWindowViewModel OpenSkeletonViewer()
+    {
+        var win = new SkeletonViewerWindow();
         win.Show();
         return win.ViewModel;
     }
@@ -37,7 +45,7 @@ public partial class ObjectAnalyzerWindow : Window
         var t1 = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         ViewModel.OnObjectHolderEntrySelected(ohe);
         var t2 = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        Logger.Trace("ViewModel.OnObjectHolderEntrySelected(ohe); t2-t1={0}ms", t2-t1);
+        Logger.Trace("ViewModel.OnObjectHolderEntrySelected(ohe); t2-t1={0}ms", t2 - t1);
     }
 
     public void OnObjectHolderEntriesDataGridLoadingRow(object? sender, DataGridRowEventArgs ev)
@@ -58,6 +66,19 @@ public partial class ObjectAnalyzerWindow : Window
                     {
                         Header = "Open in DList Viewer",
                         Command = ViewModel.OpenDListViewerObjectHolderEntryCommand,
+                        CommandParameter = rowObjectHolderEntry,
+                    }
+                );
+                break;
+
+            case Z64.Z64Object.EntryType.SkeletonHeader:
+            case Z64.Z64Object.EntryType.FlexSkeletonHeader:
+                Debug.Assert(rowObjectHolderEntry != null);
+                cm.Items.Add(
+                    new MenuItem()
+                    {
+                        Header = "Open in Skeleton Viewer",
+                        Command = ViewModel.OpenSkeletonViewerObjectHolderEntryCommand,
                         CommandParameter = rowObjectHolderEntry,
                     }
                 );
