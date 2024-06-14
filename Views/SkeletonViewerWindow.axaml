@@ -29,7 +29,7 @@
                 <TextBlock DockPanel.Dock="Top">Playback speed:</TextBlock>
                 <NumericUpDown Value="50" />
             </DockPanel>
-            <Slider Minimum="0" Maximum="0" />
+            <Slider Minimum="0" Maximum="{Binding MaxFrame}" Value="{Binding CurFrame}" />
         </DockPanel>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -38,7 +38,7 @@
                 <ColumnDefinition Width="Auto" MinWidth="100"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <v:DLViewerControl Grid.Column="0" Name="SkeletonViewerGL" Renderer="{Binding Renderer}"
-                DLists="{Binding DLists}" RenderError="{Binding RenderError}" />
+                DisplayElements="{Binding DisplayElements}" RenderError="{Binding RenderError}" />
             <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>

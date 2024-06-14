@@ -15,7 +15,7 @@ public partial class DListViewerWindowViewModel : ObservableObject
     [ObservableProperty]
     public F3DZEX.Render.Renderer? _renderer;
     [ObservableProperty]
-    private ObservableCollection<F3DZEX.Command.Dlist> _dLists = new();
+    private ObservableCollection<IDLViewerControlDisplayElement> _displayElements = new();
     [ObservableProperty]
     private string? _decodeError;
     [ObservableProperty]
@@ -30,7 +30,7 @@ public partial class DListViewerWindowViewModel : ObservableObject
                 case nameof(Renderer):
                     if (Renderer != null)
                         Renderer.PropertyChanged -= OnRendererPropertyChanged;
-                    DLists.Clear();
+                    DisplayElements.Clear();
                     DecodeError = null;
                     RenderError = null;
                     break;
@@ -98,8 +98,8 @@ public partial class DListViewerWindowViewModel : ObservableObject
         }
         if (dList != null)
         {
-            DLists.Clear();
-            DLists.Add(dList);
+            DisplayElements.Clear();
+            DisplayElements.Add(new DLViewerControlDListDisplayElement { dList = dList });
         }
     }
 }

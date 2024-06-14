@@ -16,6 +16,6 @@
         <TextBlock DockPanel.Dock="Top" Text="{Binding DecodeError}" />
         <TextBlock DockPanel.Dock="Top">Render error:</TextBlock>
         <TextBlock DockPanel.Dock="Top" Text="{Binding RenderError}" />
-        <v:DLViewerControl Name="DLViewerGL" Renderer="{Binding Renderer}" DLists="{Binding DLists}" RenderError="{Binding RenderError}" />
+        <v:DLViewerControl Name="DLViewerGL" Renderer="{Binding Renderer}" DisplayElements="{Binding DisplayElements}" RenderError="{Binding RenderError}" />
     </DockPanel>
 </Window>

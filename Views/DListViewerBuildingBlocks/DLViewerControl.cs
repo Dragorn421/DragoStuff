@@ -1,9 +1,12 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using Avalonia;
+using Avalonia.Controls;
 using F3DZEX.Command;
 using F3DZEX.Render;
+using OpenTK.Mathematics;
 
 namespace Z64Utils_recreate_avalonia_ui;
 
@@ -19,12 +22,12 @@ public class DLViewerControl : OpenTKControlBaseWithCamera
         set => SetValue(RendererProperty, value);
     }
 
-    public static readonly StyledProperty<ObservableCollection<Dlist>> DListsProperty =
-        AvaloniaProperty.Register<DLViewerControl, ObservableCollection<Dlist>>(nameof(DLists), defaultValue: new());
-    public ObservableCollection<Dlist> DLists
+    public static readonly StyledProperty<ObservableCollection<IDLViewerControlDisplayElement>> DisplayElementsProperty =
+        AvaloniaProperty.Register<DLViewerControl, ObservableCollection<IDLViewerControlDisplayElement>>(nameof(DisplayElements), defaultValue: new());
+    public ObservableCollection<IDLViewerControlDisplayElement> DisplayElements
     {
-        get => GetValue(DListsProperty);
-        set => SetValue(DListsProperty, value);
+        get => GetValue(DisplayElementsProperty);
+        set => SetValue(DisplayElementsProperty, value);
     }
 
     public static readonly StyledProperty<string?> RenderErrorProperty =
@@ -39,7 +42,7 @@ public class DLViewerControl : OpenTKControlBaseWithCamera
     {
         Logger.Debug("Name={Name}", Name);
 
-        DLists.CollectionChanged += OnDlistsCollectionChanged;
+        DisplayElements.CollectionChanged += OnDisplayElementsCollectionChanged;
 
         PropertyChanged += (sender, e) =>
         {
@@ -47,22 +50,22 @@ public class DLViewerControl : OpenTKControlBaseWithCamera
             {
                 RequestNextFrameRenderingIfInitialized();
             }
-            if (e.Property == DListsProperty)
+            if (e.Property == DisplayElementsProperty)
             {
-                var oldValue = e.GetOldValue<ObservableCollection<Dlist>>();
+                var oldValue = e.GetOldValue<ObservableCollection<IDLViewerControlDisplayElement>>();
                 if (oldValue != null)
-                    oldValue.CollectionChanged -= OnDlistsCollectionChanged;
+                    oldValue.CollectionChanged -= OnDisplayElementsCollectionChanged;
 
-                var newValue = e.GetNewValue<ObservableCollection<Dlist>>();
+                var newValue = e.GetNewValue<ObservableCollection<IDLViewerControlDisplayElement>>();
                 Debug.Assert(newValue != null);
-                newValue.CollectionChanged += OnDlistsCollectionChanged;
+                newValue.CollectionChanged += OnDisplayElementsCollectionChanged;
 
                 RequestNextFrameRenderingIfInitialized();
             }
         };
     }
 
-    private void OnDlistsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    private void OnDisplayElementsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         RequestNextFrameRenderingIfInitialized();
     }
@@ -85,14 +88,44 @@ public class DLViewerControl : OpenTKControlBaseWithCamera
 
             Logger.Trace("Name={Name} RenderStart OK", Name);
 
-            foreach (var dList in DLists)
+            foreach (var de in DisplayElements)
             {
                 if (Renderer.RenderFailed())
                     break;
 
+                Dlist dList;
+                Matrix4? mtx = null;
+
+                // TODO ugly code
+                if (de is DLViewerControlDListDisplayElement)
+                {
+                    dList = ((DLViewerControlDListDisplayElement)de).dList;
+                }
+                else if (de is DLViewerControlDlistWithMatrixDisplayElement)
+                {
+                    dList = ((DLViewerControlDlistWithMatrixDisplayElement)de).dList;
+                    mtx = ((DLViewerControlDlistWithMatrixDisplayElement)de).mtx;
+                }
+                else
+                {
+                    throw new NotImplementedException($"unsupported displayelement {de}");
+                }
+
+                if (mtx != null)
+                {
+                    Renderer.RdpMtxStack.Push();
+                    // TODO idk why explicit cast is needed
+                    Renderer.RdpMtxStack.Load((Matrix4)mtx);
+                }
+
                 Logger.Trace("Name={Name} RenderDList({dList})", Name, dList);
                 Renderer.RenderDList(dList);
                 Logger.Trace("Name={Name} RenderDList OK", Name);
+
+                if (mtx != null)
+                {
+                    Renderer.RdpMtxStack.Pop();
+                }
             }
 
 
