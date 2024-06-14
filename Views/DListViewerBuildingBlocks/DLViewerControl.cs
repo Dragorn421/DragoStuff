@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using Avalonia;
-using Avalonia.Controls;
 using F3DZEX.Command;
 using F3DZEX.Render;
 using OpenTK.Mathematics;
@@ -38,7 +37,7 @@ public class DLViewerControl : OpenTKControlBaseWithCamera
         set => SetValue(RenderErrorProperty, value);
     }
 
-    public DLViewerControl()
+    public DLViewerControl() : base(new CameraHandling(camPos: new Vector3(0, -2000, -15000), angle: new Vector3(20, -30, 0)))
     {
         Logger.Debug("Name={Name}", Name);
 

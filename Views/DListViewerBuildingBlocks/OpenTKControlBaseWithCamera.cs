@@ -18,11 +18,10 @@ public abstract class OpenTKControlBaseWithCamera : OpenTKControlBase, ICustomHi
     protected Matrix4 Proj { get; private set; }
     protected Matrix4 View { get => _camera.View; }
 
-    public OpenTKControlBaseWithCamera()
+    public OpenTKControlBaseWithCamera(CameraHandling? camera = null)
     {
         Logger.Debug("Name={Name}", Name);
-        // TODO allow passing defaults to CameraHandling
-        _camera = new CameraHandling();
+        _camera = camera ?? new CameraHandling();
         _camera.PropertyChanged += OnCameraPropertyChanged;
 
         ClipToBounds = true; // cf HitTest
