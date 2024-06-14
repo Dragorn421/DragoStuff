@@ -15,6 +15,7 @@ using RDP;
 using System.Diagnostics;
 using F3DZEX.Command;
 using CommunityToolkit.Mvvm.ComponentModel;
+using OpenTK.Mathematics;
 
 namespace F3DZEX.Render
 {

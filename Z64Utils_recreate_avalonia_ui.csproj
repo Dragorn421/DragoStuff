@@ -34,8 +34,7 @@
 
         <PackageReference Include="NLog" Version="5.2.7" />
 
-        <!-- TODO upgrade OpenTK (using Z64Utils' current version) -->
-        <PackageReference Include="OpenTK" Version="3.1.0" />
+        <PackageReference Include="OpenTK" Version="4.8.2" />
 
         <PackageReference Include="Syroot.BinaryData" Version="5.2.2" />
 

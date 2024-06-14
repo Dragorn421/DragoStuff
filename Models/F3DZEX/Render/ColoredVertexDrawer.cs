@@ -4,6 +4,7 @@ using System.Text;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System.IO;
+using OpenTK.Mathematics;
 
 namespace F3DZEX.Render
 {

@@ -1,6 +1,7 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OpenTK;
+using OpenTK.Mathematics;
 
 public partial class CameraHandling : ObservableObject
 {
