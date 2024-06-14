@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using F3DZEX.Command;
 using F3DZEX.Render;
 using OpenTK.Mathematics;
+using RDP;
+using Syroot.BinaryData;
 using Z64;
 
 namespace Z64Utils_recreate_avalonia_ui;
@@ -226,9 +229,10 @@ public partial class SkeletonViewerWindowViewModel : ObservableObject
 
         Stack<Matrix4> matrixStack = new();
         Matrix4[] matricesByLimb = new Matrix4[skel.LimbCount];
+        List<Matrix4> matrixBufferForFlex = new();
         void ProcessLimb(int limbIdx)
         {
-            Vector3 pos = new Vector3(
+            var pos = new Vector3(
                 skelLimbsArray[limbIdx].JointX,
                 skelLimbsArray[limbIdx].JointY,
                 skelLimbsArray[limbIdx].JointZ
@@ -244,6 +248,8 @@ public partial class SkeletonViewerWindowViewModel : ObservableObject
                 ;
 
             matricesByLimb[limbIdx] = limbMtx;
+            if (skelLimbsArray[limbIdx].DListSeg.VAddr != 0)
+                matrixBufferForFlex.Add(limbMtx);
 
             matrixStack.Push(limbMtx);
 
@@ -266,6 +272,8 @@ public partial class SkeletonViewerWindowViewModel : ObservableObject
             ;
 
         matricesByLimb[0] = rootLimbMtx;
+        if (skelLimbsArray[0].DListSeg.VAddr != 0)
+            matrixBufferForFlex.Add(rootLimbMtx);
 
         matrixStack.Push(rootLimbMtx);
 
@@ -273,6 +281,16 @@ public partial class SkeletonViewerWindowViewModel : ObservableObject
             ProcessLimb(skelLimbsArray[0].Child);
 
         matrixStack.Pop();
+
+        var mtxBufForFlexBytes = new byte[matrixBufferForFlex.Count * Mtx.SIZE];
+        using (BinaryStream bw = new(new MemoryStream(mtxBufForFlexBytes), ByteConverter.Big))
+        {
+            foreach (var mtx in matrixBufferForFlex)
+            {
+                Mtx.FromMatrix4(mtx).Write(bw);
+            }
+        }
+        Renderer.Memory.Segments[0xD] = F3DZEX.Memory.Segment.FromBytes("flex", mtxBufForFlexBytes);
 
         return matricesByLimb;
     }
