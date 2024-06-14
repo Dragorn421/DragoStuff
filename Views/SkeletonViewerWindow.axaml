@@ -21,15 +21,19 @@
             <TextBlock>Render error:</TextBlock>
             <TextBlock Text="{Binding RenderError}" />
         </StackPanel>
-        <DockPanel DockPanel.Dock="Bottom">
+        <DockPanel DockPanel.Dock="Bottom" VerticalAlignment="Center">
             <Button DockPanel.Dock="Left">backwards</Button>
             <Button DockPanel.Dock="Left">play</Button>
-            <TextBlock DockPanel.Dock="Left">0/0</TextBlock>
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,10,0">
+                <NumericUpDown Minimum="0" Maximum="{Binding MaxFrame}" Value="{Binding CurFrame}" FormatString="0" MinWidth="120" />
+                <TextBlock VerticalAlignment="Center">/</TextBlock>
+                <TextBlock Text="{Binding MaxFrame}" VerticalAlignment="Center" />
+            </StackPanel>
             <DockPanel DockPanel.Dock="Right">
                 <TextBlock DockPanel.Dock="Top">Playback speed:</TextBlock>
                 <NumericUpDown Value="50" />
             </DockPanel>
-            <Slider Minimum="0" Maximum="{Binding MaxFrame}" Value="{Binding CurFrame}" />
+            <Slider Minimum="0" Maximum="{Binding MaxFrame}" Value="{Binding CurFrame}" Margin="10,0,10,0" />
         </DockPanel>
         <Grid>
             <Grid.ColumnDefinitions>
