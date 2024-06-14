@@ -22,8 +22,8 @@
             <TextBlock Text="{Binding RenderError}" />
         </StackPanel>
         <DockPanel DockPanel.Dock="Bottom" VerticalAlignment="Center">
-            <Button DockPanel.Dock="Left">backwards</Button>
-            <Button DockPanel.Dock="Left">play</Button>
+            <Button DockPanel.Dock="Left" Command="{Binding PlayAnimBackwardsCommand}">backwards</Button>
+            <Button DockPanel.Dock="Left" Command="{Binding PlayAnimForwardsCommand}">play</Button>
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,10,0">
                 <NumericUpDown Minimum="0" Maximum="{Binding MaxFrame}" Value="{Binding CurFrame}" FormatString="0" MinWidth="120" />
                 <TextBlock VerticalAlignment="Center">/</TextBlock>
@@ -31,7 +31,7 @@
             </StackPanel>
             <DockPanel DockPanel.Dock="Right">
                 <TextBlock DockPanel.Dock="Top">Playback speed:</TextBlock>
-                <NumericUpDown Value="50" />
+                <NumericUpDown Value="{Binding PlayAnimTickPeriodMs}" />
             </DockPanel>
             <Slider Minimum="0" Maximum="{Binding MaxFrame}" Value="{Binding CurFrame}" Margin="10,0,10,0" />
         </DockPanel>

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using F3DZEX.Command;
 using F3DZEX.Render;
@@ -48,10 +49,11 @@ public partial class SkeletonViewerWindowViewModel : ObservableObject
     }
     [ObservableProperty]
     private ObservableCollection<AnimationEntry> _animationEntries = new();
-    /*
+
     [ObservableProperty]
-    private ;
-    */
+    private double _playAnimTickPeriodMs;
+    private DispatcherTimer _playAnimTimer = new();
+    private bool _playAnimForwards;
 
     public SkeletonViewerWindowViewModel()
     {
@@ -65,10 +67,19 @@ public partial class SkeletonViewerWindowViewModel : ObservableObject
                     RenderError = null;
                     break;
                 case nameof(CurFrame):
+                    Debug.Assert(CurFrame >= 0 && CurFrame <= MaxFrame);
                     UpdateDisplayElements();
+                    break;
+                case nameof(PlayAnimTickPeriodMs):
+                    Debug.WriteLine("PlayAnimTickPeriodMs changed");
+                    if (PlayAnimTickPeriodMs < 1)
+                        PlayAnimTickPeriodMs = 1;
+                    _playAnimTimer.Interval = TimeSpan.FromMilliseconds(PlayAnimTickPeriodMs);
                     break;
             }
         };
+        _playAnimTimer.Tick += OnPlayAnimTimerTick;
+        PlayAnimTickPeriodMs = 1000 / 20;
     }
 
     public void SetSegment(int index, F3DZEX.Memory.Segment segment)
@@ -180,6 +191,38 @@ public partial class SkeletonViewerWindowViewModel : ObservableObject
                 }
             );
         }
+    }
+
+    public void PlayAnimBackwardsCommand()
+    {
+        if (!_playAnimForwards)
+        {
+            _playAnimTimer.IsEnabled = !_playAnimTimer.IsEnabled;
+        }
+        else
+        {
+            _playAnimForwards = false;
+            _playAnimTimer.IsEnabled = true;
+        }
+    }
+    public void PlayAnimForwardsCommand()
+    {
+        if (_playAnimForwards)
+        {
+            _playAnimTimer.IsEnabled = !_playAnimTimer.IsEnabled;
+        }
+        else
+        {
+            _playAnimForwards = true;
+            _playAnimTimer.IsEnabled = true;
+        }
+    }
+    private void OnPlayAnimTimerTick(object? sender, EventArgs e)
+    {
+        CurFrame = (
+            CurFrame
+            + (_playAnimForwards ? 1 : ((MaxFrame + 1) - 1))
+        ) % (MaxFrame + 1);
     }
 
     public void OnAnimationEntrySelected(AnimationEntry animationEntry)
