@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Linq;
 using Avalonia;
 using Avalonia.OpenGL;
 using Avalonia.OpenGL.Controls;
@@ -15,11 +15,23 @@ public abstract class OpenTKControlBase : OpenGlControlBase
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-    private void CheckError(GlInterface gl)
+    private void CheckError(GlInterface gl, int[]? ignoredErrors = null)
     {
         int err;
         while ((err = gl.GetError()) != GL_NO_ERROR)
+        {
             Logger.Error("Name={Name} GLerror {err}", Name, err);
+#if DEBUG
+            if (ignoredErrors != null && ignoredErrors.Contains(err))
+            {
+                // ignore
+            }
+            else
+            {
+                throw new Exception($"Name={Name} GLerror {err}");
+            }
+#endif
+        }
     }
 
     bool _initialized = false;
@@ -41,7 +53,8 @@ public abstract class OpenTKControlBase : OpenGlControlBase
 
         Logger.Debug("Name={Name} in", Name);
 
-        CheckError(gl);
+        // ignore GL_INVALID_ENUM errors, Avalonia bug. cf https://github.com/AvaloniaUI/Avalonia/issues/13807
+        CheckError(gl, new[] { GL_INVALID_ENUM });
 
         LoadOpenTKBindings(gl);
         CheckError(gl);
