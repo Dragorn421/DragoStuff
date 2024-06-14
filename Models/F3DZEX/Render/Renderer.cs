@@ -14,10 +14,11 @@ using Z64;
 using RDP;
 using System.Diagnostics;
 using F3DZEX.Command;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace F3DZEX.Render
 {
-    public class Renderer
+    public partial class Renderer : ObservableObject
     {
         public class Config
         {
@@ -246,6 +247,8 @@ namespace F3DZEX.Render
 
         public uint RenderErrorAddr { get; private set; } = 0xFFFFFFFF;
         public string ErrorMsg { get; private set; } = null;
+        [ObservableProperty]
+        private bool _hasError = false;
         public Config CurrentConfig { get; set; }
         public Memory Memory { get; private set; }
 
@@ -300,8 +303,12 @@ namespace F3DZEX.Render
             _combiner = new ColorCombiner();
             _chromaKey = new ChromaKey();
         }
-        
-        public void ClearErrors() => ErrorMsg = null;
+
+        public void ClearErrors()
+        {
+            ErrorMsg = null;
+            HasError = false;
+        }
 
 
 
@@ -480,15 +487,18 @@ namespace F3DZEX.Render
             {
                 foreach (var entry in dlist)
                 {
-                    
+
                     addr = entry.addr;
                     ProcessInstruction(entry.cmd);
                 }
             }
             catch (Exception ex)
             {
+                Debug.WriteLine("Renderer.RenderDList(): unhandled exception");
+                Debug.WriteLine(ex);
                 RenderErrorAddr = addr;
                 ErrorMsg = ex.Message;
+                HasError = true;
             }
         }
 

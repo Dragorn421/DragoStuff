@@ -1,5 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Z64Utils_recreate_avalonia_ui;
@@ -21,17 +23,47 @@ public partial class DListViewerWindowViewModel : ObservableObject
 
     public DListViewerWindowViewModel()
     {
-        PropertyChanged += (sender, e) =>
+        PropertyChanging += (sender, e) =>
         {
             switch (e.PropertyName)
             {
                 case nameof(Renderer):
+                    if (Renderer != null)
+                        Renderer.PropertyChanged -= OnRendererPropertyChanged;
                     DLists.Clear();
                     DecodeError = null;
                     RenderError = null;
                     break;
             }
         };
+        PropertyChanged += (sender, e) =>
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(Renderer):
+                    if (Renderer != null)
+                        Renderer.PropertyChanged += OnRendererPropertyChanged;
+                    break;
+            }
+        };
+    }
+
+    private void OnRendererPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        Debug.Assert(Renderer != null);
+        switch (e.PropertyName)
+        {
+            case nameof(Renderer.HasError):
+                if (Renderer.HasError)
+                {
+                    RenderError = $"RENDER ERROR AT 0x{Renderer.RenderErrorAddr:X8}! ({Renderer.ErrorMsg})";
+                }
+                else
+                {
+                    RenderError = null;
+                }
+                break;
+        }
     }
 
     public void SetSegment(int index, F3DZEX.Memory.Segment segment)
