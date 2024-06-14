@@ -55,11 +55,23 @@ namespace F3DZEX.Render
 
         static public ShaderHandler FromSrcFiles(string vertSrcFile, string fragSrcFile, string? geomSrcFile = null)
         {
-            return new ShaderHandler(
-                vertSrc: File.ReadAllText(vertSrcFile),
-                fragSrc: File.ReadAllText(fragSrcFile),
-                geomSrc: geomSrcFile == null ? null : File.ReadAllText(geomSrcFile)
-            );
+            try
+            {
+                return new ShaderHandler(
+                    vertSrc: File.ReadAllText(vertSrcFile),
+                    fragSrc: File.ReadAllText(fragSrcFile),
+                    geomSrc: geomSrcFile == null ? null : File.ReadAllText(geomSrcFile)
+                );
+            }
+            catch
+            {
+                var logger = NLog.LogManager.GetCurrentClassLogger();
+                logger.Warn("new ShaderHandler() failed");
+                logger.Warn("vertSrcFile={vertSrcFile}", vertSrcFile);
+                logger.Warn("fragSrcFile={fragSrcFile}", fragSrcFile);
+                logger.Warn("geomSrcFile={geomSrcFile}", geomSrcFile);
+                throw;
+            }
         }
 
         static public ShaderHandler FromSrcFilesInShadersDir(string vertSrcFileName, string fragSrcFileName, string? geomSrcFileName = null)
