@@ -1,4 +1,4 @@
-﻿#version 330 core
+#version 330 core
 
 uniform vec4 u_HighlightColor;
 uniform bool u_HighlightEnabled;

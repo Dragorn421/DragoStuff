@@ -1,4 +1,4 @@
-﻿#version 330 core
+#version 330 core
 
 // Input
 layout(location = 0) in ivec3 rdpVtxPos;
