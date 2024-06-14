@@ -10,9 +10,11 @@
 >
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" Text="{Binding InfoText}" />
-        <Grid>
+        <Panel>
             <v:CheckPatternControl CheckerSize="10" />
-            <Image Source="{Binding Image}" RenderOptions.BitmapInterpolationMode="None" />
-        </Grid>
+            <Panel Name="ImageWrapperPanel">
+                <Image Name="Image" Source="{Binding Image}" RenderOptions.BitmapInterpolationMode="None" />
+            </Panel>
+        </Panel>
     </DockPanel>
 </UserControl>

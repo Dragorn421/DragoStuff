@@ -54,9 +54,6 @@
                     </DataGrid>
                 </DockPanel>
             </TabItem>
-            <TabItem Header="test zone">
-
-            </TabItem>
         </TabControl>
     </DockPanel>
 </Window>
