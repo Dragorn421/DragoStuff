@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:avalonia_contextmenu_xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="avalonia_contextmenu_xaml.MainWindow"
+    x:DataType="vm:MainWindowViewModel"
+    Title="avalonia_contextmenu_xaml">
+    <StackPanel>
+        <TextBlock>With ContextMenu created in code:</TextBlock>
+        <DataGrid
+            ItemsSource="{Binding MyDataGridItems}"
+            LoadingRow="OnDataGridLoadingRow"
+        >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Col1" Binding="{Binding ValueCol1}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock>With template attempt (not functional):</TextBlock>
+        <DataGrid
+            ItemsSource="{Binding MyDataGridItems}"
+            LoadingRow="OnDataGridWTemplateAttemptLoadingRow"
+        >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Col1" Binding="{Binding ValueCol1}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </StackPanel>
+</Window>
