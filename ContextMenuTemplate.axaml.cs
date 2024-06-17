@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
@@ -11,7 +12,11 @@ public partial class ContextMenuTemplate : ContextMenu
 
     public ContextMenuTemplate(string thingOptionName)
     {
+        DataContext = this;
         _thingOptionName = thingOptionName;
         AvaloniaXamlLoader.Load(this);
+
+        // prints "ContextMenuTemplate Items.Count=2"
+        Debug.WriteLine($"ContextMenuTemplate Items.Count={Items.Count}");
     }
 }
