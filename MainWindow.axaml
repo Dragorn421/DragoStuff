@@ -27,5 +27,31 @@
                 <DataGridTextColumn Header="Col1" Binding="{Binding ValueCol1}" />
             </DataGrid.Columns>
         </DataGrid>
+
+        <TextBlock>With Style for DataGridRow:</TextBlock>
+        <DataGrid
+            ItemsSource="{Binding MyDataGridItems}"
+        >
+            <DataGrid.Styles>
+                <Style Selector="DataGridRow">
+                    <Setter Property="ContextMenu">
+                        <ContextMenu x:DataType="vm:MainWindowViewModelRowItem">
+                            <MenuItem Header="{Binding ValueCol1}" />
+                            <ContextMenu.Resources>
+                                <vm:MyConverter x:Key="myConverter"/>
+                            </ContextMenu.Resources>
+                            <MenuItem Header="{Binding ValueCol1,
+                                              Converter={StaticResource myConverter},
+                                              ConverterParameter='a prefix '}" />
+                            <MenuItem Header="runthing" Command="{Binding RunThing}" />
+                            <MenuItem Header="heyy" />
+                        </ContextMenu>
+                    </Setter>
+                </Style>
+            </DataGrid.Styles>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Col1" Binding="{Binding ValueCol1}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </StackPanel>
 </Window>

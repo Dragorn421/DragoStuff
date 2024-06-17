@@ -15,7 +15,7 @@ public partial class MainWindow : Window
     public void OnDataGridLoadingRow(object? sender, DataGridRowEventArgs e)
     {
         var cm = new ContextMenu();
-        var ri = e.Row.DataContext as MainWindowViewModel.RowItem;
+        var ri = e.Row.DataContext as MainWindowViewModelRowItem;
         cm.Items.Add(new MenuItem() { Header = "thing " + ri.ValueCol1 });
         cm.Items.Add(new MenuItem() { Header = "hey" });
         e.Row.ContextMenu = cm;
@@ -23,7 +23,7 @@ public partial class MainWindow : Window
 
     public void OnDataGridWTemplateAttemptLoadingRow(object? sender, DataGridRowEventArgs e)
     {
-        var ri = e.Row.DataContext as MainWindowViewModel.RowItem;
+        var ri = e.Row.DataContext as MainWindowViewModelRowItem;
         e.Row.ContextMenu = new ContextMenuTemplate("thing " + ri.ValueCol1);
     }
 }
