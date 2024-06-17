@@ -27,11 +27,8 @@ public partial class MainWindowViewModel : ObservableObject
     public Func<ObjectAnalyzerWindowViewModel>? OpenObjectAnalyzer;
     public Func<DListViewerWindowViewModel>? OpenDListViewer;
 
-    public ICommand OpenObjectAnalyzerRomFileCommand;
-
     public MainWindowViewModel()
     {
-        OpenObjectAnalyzerRomFileCommand = new RelayCommand<RomFile>(OpenObjectAnalyzerRomFileCommandExecute);
         PropertyChanged += (sender, e) =>
         {
             switch (e.PropertyName)
@@ -101,9 +98,13 @@ public partial class MainWindowViewModel : ObservableObject
     // TODO: vvv
 
     public void ExportFSCommand() { }
+    public bool CanExportFSCommand(object arg) { return false; }
     public void SaveAsCommand() { }
+    public bool CanSaveAsCommand(object arg) { return false; }
     public void ImportFileNameListCommand() { }
+    public bool CanImportFileNameListCommand(object arg) { return false; }
     public void ExportFileNameListCommand() { }
+    public bool CanExportFileNameListCommand(object arg) { return false; }
 
     public void OpenDListViewerCommand()
     {
@@ -112,7 +113,9 @@ public partial class MainWindowViewModel : ObservableObject
     }
     public void F3DZEXDisassemblerCommand() { }
     public void ROMRAMConversionsCommand() { }
+    public bool CanROMRAMConversionsCommand(object arg) { return false; }
     public void TextureViewerCommand() { }
+    public bool CanTextureViewerCommand(object arg) { return false; }
     public void ObjectAnalyzerCommand()
     {
         Debug.Assert(OpenObjectAnalyzer != null);
@@ -123,16 +126,6 @@ public partial class MainWindowViewModel : ObservableObject
     public void AboutCommand() { }
 
     //
-
-    private async void OpenObjectAnalyzerRomFileCommandExecute(RomFile? romFile)
-    {
-        Debug.Assert(romFile != null);
-        Debug.Assert(PickSegmentID != null);
-        int? segmentID = await PickSegmentID();
-        Logger.Debug("segmentID={segmentID}", segmentID);
-        if (segmentID != null)
-            OpenObjectAnalyzerByZ64File(romFile.File, (int)segmentID);
-    }
 
     public ObjectAnalyzerWindowViewModel OpenObjectAnalyzerByZ64File(Z64File file, int segment)
     {
@@ -161,26 +154,7 @@ public partial class MainWindowViewModel : ObservableObject
     private string _filterText = "";
 
     [ObservableProperty]
-    public ObservableCollection<RomFile> _romFiles = new();
-
-    public class RomFile
-    {
-        public string Name { get; }
-        public string VROM { get; }
-        public string ROM { get; }
-        public string Type { get; }
-
-        public Z64File File { get; }
-
-        public RomFile(string name, string vrom, string rom, string type, Z64File file)
-        {
-            Name = name;
-            VROM = vrom;
-            ROM = rom;
-            Type = type;
-            File = file;
-        }
-    }
+    public ObservableCollection<MainWindowViewModelRomFile> _romFiles = new();
 
     public void UpdateRomFiles()
     {
@@ -208,9 +182,42 @@ public partial class MainWindowViewModel : ObservableObject
             )
             {
                 RomFiles.Add(
-                    new RomFile(name, vrom, rom, type, file)
+                    new MainWindowViewModelRomFile(this, name, vrom, rom, type, file)
                 );
             }
         }
+    }
+}
+
+public class MainWindowViewModelRomFile
+{
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+    public string Name { get; }
+    public string VROM { get; }
+    public string ROM { get; }
+    public string Type { get; }
+
+    public Z64File File { get; }
+
+    private MainWindowViewModel Mwvm { get; }
+
+    public MainWindowViewModelRomFile(MainWindowViewModel mwvm, string name, string vrom, string rom, string type, Z64File file)
+    {
+        Name = name;
+        VROM = vrom;
+        ROM = rom;
+        Type = type;
+        File = file;
+        Mwvm = mwvm;
+    }
+
+    public async void OpenObjectAnalyzerCommand()
+    {
+        Debug.Assert(Mwvm.PickSegmentID != null);
+        int? segmentID = await Mwvm.PickSegmentID();
+        Logger.Debug("segmentID={segmentID}", segmentID);
+        if (segmentID != null)
+            Mwvm.OpenObjectAnalyzerByZ64File(File, (int)segmentID);
     }
 }

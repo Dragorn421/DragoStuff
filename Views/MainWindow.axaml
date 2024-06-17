@@ -43,8 +43,17 @@
                         IsReadOnly="True"
                         CanUserResizeColumns="True"
                         GridLinesVisibility="All"
-                        LoadingRow="OnRomFileDataGridLoadingRow"
                     >
+                        <DataGrid.Styles>
+                            <Style Selector="DataGridRow">
+                                <Setter Property="ContextMenu">
+                                    <ContextMenu x:DataType="vm:MainWindowViewModelRomFile">
+                                        <MenuItem Header="Open Object Analyzer"
+                                            Command="{Binding OpenObjectAnalyzerCommand}" />
+                                    </ContextMenu>
+                                </Setter>
+                            </Style>
+                        </DataGrid.Styles>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
                             <DataGridTextColumn Header="VROM" Binding="{Binding VROM}" />

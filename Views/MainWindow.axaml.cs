@@ -71,24 +71,4 @@ public partial class MainWindow : Window
         win.Show();
         return win.ViewModel;
     }
-
-    public void OnRomFileDataGridLoadingRow(object? sender, DataGridRowEventArgs ev)
-    {
-        Debug.Assert(ev.Row.DataContext != null);
-        Debug.Assert(ev.Row.DataContext is MainWindowViewModel.RomFile);
-        var rowRomFile = (MainWindowViewModel.RomFile)ev.Row.DataContext;
-
-        // TODO should use some kind of "template" xaml thing for this, not code?
-        var cm = new ContextMenu();
-        Debug.Assert(rowRomFile != null);
-        cm.Items.Add(
-            new MenuItem()
-            {
-                Header = "Open Object Analyzer",
-                Command = ViewModel.OpenObjectAnalyzerRomFileCommand,
-                CommandParameter = rowRomFile,
-            }
-        );
-        ev.Row.ContextMenu = cm;
-    }
 }
