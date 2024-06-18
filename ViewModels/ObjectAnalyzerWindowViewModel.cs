@@ -399,7 +399,7 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
         Debug.Assert(_game != null);
         dlvVM.Renderer = new F3DZEX.Render.Renderer(_game, new F3DZEX.Render.Renderer.Config());
         // TODO cleanup, segment config, render config
-        dlvVM.SomeTextForNow = "soon tm view of DL " + ohe.ObjectHolder.Name;
+        dlvVM.SomeTextForNow = "Viewing DL " + ohe.ObjectHolder.Name;
         Debug.Assert(_file != null);
         dlvVM.SetSegment(_segment, F3DZEX.Memory.Segment.FromBytes("[this object]", _file.Data));
         dlvVM.SetSegment(8, EMPTY_DLIST_SEGMENT);

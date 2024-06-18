@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using Avalonia.Metadata;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Z64Utils_recreate_avalonia_ui;
@@ -10,8 +11,11 @@ public partial class DListViewerWindowViewModel : ObservableObject
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
+    // Used by the view to redraw when needed
+    public event EventHandler? RenderContextChanged;
+
     [ObservableProperty]
-    private string _someTextForNow = "hey";
+    private string _someTextForNow = "";
     [ObservableProperty]
     public F3DZEX.Render.Renderer? _renderer;
     [ObservableProperty]
@@ -20,6 +24,9 @@ public partial class DListViewerWindowViewModel : ObservableObject
     private string? _decodeError;
     [ObservableProperty]
     private string? _renderError;
+
+    // Provided by the view
+    public Func<DListViewerRenderSettingsViewModel?>? OpenDListViewerRenderSettings;
 
     public DListViewerWindowViewModel()
     {
@@ -102,4 +109,35 @@ public partial class DListViewerWindowViewModel : ObservableObject
             DisplayElements.Add(new DLViewerControlDListDisplayElement { dList = dList });
         }
     }
+
+    public void OpenRenderSettingsCommand()
+    {
+        Debug.Assert(OpenDListViewerRenderSettings != null);
+        var vm = OpenDListViewerRenderSettings();
+        if (vm == null)
+        {
+            // Was already open
+            return;
+        }
+
+        Debug.Assert(Renderer != null);
+        vm.RendererConfig = Renderer.CurrentConfig;
+        vm.PropertyChanged += (sender, e) =>
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(vm.RendererConfig):
+                    Renderer.CurrentConfig = vm.RendererConfig;
+                    RenderContextChanged?.Invoke(this, new());
+                    break;
+            }
+        };
+    }
+    [DependsOn(nameof(Renderer))]
+    public bool CanOpenRenderSettingsCommand(object arg)
+    {
+        return Renderer != null;
+    }
+    public void OpenDisassemblyCommand() { }
+    public void OpenSegmentsConfigCommand() { }
 }

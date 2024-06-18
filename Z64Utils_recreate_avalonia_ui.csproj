@@ -29,6 +29,7 @@
             Version="11.0.10" />
 
         <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.10" />
+        <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.10" />
 
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 

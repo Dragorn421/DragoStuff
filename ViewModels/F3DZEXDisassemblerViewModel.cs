@@ -30,7 +30,7 @@ public partial class F3DZEXDisassemblerViewModel : ObservableObject
     };
 
     // Provided by the view
-    public Func<F3DZEXDisassemblerSettingsViewModel>? OpenF3DZEXDisassemblerSettings;
+    public Func<F3DZEXDisassemblerSettingsViewModel?>? OpenF3DZEXDisassemblerSettings;
 
     public F3DZEXDisassemblerViewModel()
     {
