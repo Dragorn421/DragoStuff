@@ -10,12 +10,15 @@ public partial class ObjectAnalyzerWindow : Window
 
     public ObjectAnalyzerWindowViewModel ViewModel;
 
+    private F3DZEXDisassemblerSettingsWindow? _currentF3DZEXDisassemblerSettingsWindow;
+
     public ObjectAnalyzerWindow()
     {
         ViewModel = new ObjectAnalyzerWindowViewModel()
         {
             OpenDListViewer = OpenDListViewer,
             OpenSkeletonViewer = OpenSkeletonViewer,
+            OpenF3DZEXDisassemblerSettings = OpenF3DZEXDisassemblerSettings,
         };
         DataContext = ViewModel;
         InitializeComponent();
@@ -33,6 +36,23 @@ public partial class ObjectAnalyzerWindow : Window
         var win = new SkeletonViewerWindow();
         win.Show();
         return win.ViewModel;
+    }
+
+    private F3DZEXDisassemblerSettingsViewModel? OpenF3DZEXDisassemblerSettings()
+    {
+        if (_currentF3DZEXDisassemblerSettingsWindow != null)
+        {
+            _currentF3DZEXDisassemblerSettingsWindow.Activate();
+            return null;
+        }
+
+        _currentF3DZEXDisassemblerSettingsWindow = new F3DZEXDisassemblerSettingsWindow();
+        _currentF3DZEXDisassemblerSettingsWindow.Closed += (sender, e) =>
+        {
+            _currentF3DZEXDisassemblerSettingsWindow = null;
+        };
+        _currentF3DZEXDisassemblerSettingsWindow.Show();
+        return _currentF3DZEXDisassemblerSettingsWindow.ViewModel;
     }
 
     public void OnObjectHolderEntriesDataGridSelectionChanged(object? sender, SelectionChangedEventArgs ev)

@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using F3DZEX.Command;
 using RDP;
 using Z64;
 
@@ -26,9 +28,22 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
     [ObservableProperty]
     private string _windowTitle = DEFAULT_WINDOW_TITLE;
 
+    [ObservableProperty]
+    private F3DZEX.Disassembler.Config _F3DZEXDisasConfig = new()
+    {
+        ShowAddress = true,
+        RelativeAddress = false,
+        DisasMultiCmdMacro = true,
+        AddressLiteral = false,
+        Static = true,
+    };
+    [ObservableProperty]
+    private Dlist? _disasDList = null;
+
     // Provided by the view
     public Func<DListViewerWindowViewModel>? OpenDListViewer;
     public Func<SkeletonViewerWindowViewModel>? OpenSkeletonViewer;
+    public Func<F3DZEXDisassemblerSettingsViewModel?>? OpenF3DZEXDisassemblerSettings;
 
     public ICommand OpenDListViewerObjectHolderEntryCommand;
     public ICommand OpenSkeletonViewerObjectHolderEntryCommand;
@@ -43,6 +58,11 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
             {
                 case nameof(FilterText):
                     UpdateMap();
+                    break;
+                case nameof(F3DZEXDisasConfig):
+                case nameof(DisasDList):
+                    if (DisasDList != null)
+                        UpdateDListDisassembly();
                     break;
             }
         };
@@ -98,7 +118,27 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
         return HasFile();
     }
 
-    public void DisassemblySettingsCommand() { }
+    public void DisassemblySettingsCommand()
+    {
+        Debug.Assert(OpenF3DZEXDisassemblerSettings != null);
+        var vm = OpenF3DZEXDisassemblerSettings();
+        if (vm == null)
+        {
+            // Was already open
+            return;
+        }
+
+        vm.DisasConfig = F3DZEXDisasConfig;
+        vm.PropertyChanged += (sender, e) =>
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(vm.DisasConfig):
+                    F3DZEXDisasConfig = vm.DisasConfig;
+                    break;
+            }
+        };
+    }
 
     //
 
@@ -230,6 +270,8 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
         ObjectHolderEntryDataBytes = ohe.ObjectHolder.GetData();
         ObjectHolderEntryFirstByteAddress = (uint)_object.OffsetOf(ohe.ObjectHolder);
 
+        DisasDList = null;
+
         switch (ohe.ObjectHolder.GetEntryType())
         {
             case Z64Object.EntryType.Texture:
@@ -279,10 +321,72 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
                 });
                 break;
 
+            case Z64Object.EntryType.DList:
+                var dListHolder = (Z64Object.DListHolder)ohe.ObjectHolder;
+                DisasDList = new Dlist(
+                    dListHolder.GetData(),
+                    new SegmentedAddress(_segment, _object.OffsetOf(dListHolder)).VAddr
+                );
+                break;
+
+            // pretty much verbatim from ObjectAnalyzerForm.listView_map_SelectedIndexChanged
+            case Z64Object.EntryType.AnimationHeader:
+                {
+                    var anim = (Z64Object.AnimationHolder)ohe.ObjectHolder;
+
+                    StringWriter sw = new StringWriter();
+                    sw.WriteLine($"Frame Count: {anim.FrameCount}");
+                    sw.WriteLine($"Frame Data: 0x{anim.FrameData.VAddr:X8}");
+                    sw.WriteLine($"Joint Indices: 0x{anim.JointIndices.VAddr:X8}");
+                    sw.WriteLine($"Static Index Max: 0x{anim.StaticIndexMax}");
+
+                    ObjectHolderEntryDetailsViewModel = new TextOHEDViewModel()
+                    {
+                        Text = sw.ToString()
+                    };
+                }
+                break;
+            case Z64Object.EntryType.JointIndices:
+                {
+                    var joints = (Z64Object.AnimationJointIndicesHolder)ohe.ObjectHolder;
+                    StringWriter sw = new StringWriter();
+                    sw.WriteLine($"Joints:");
+                    foreach (var joint in joints.JointIndices)
+                        sw.WriteLine($"{{ frameData[{joint.X}], frameData[{joint.Y}], frameData[{joint.Z}] }}");
+
+                    ObjectHolderEntryDetailsViewModel = new TextOHEDViewModel()
+                    {
+                        Text = sw.ToString()
+                    };
+                }
+                break;
+
             default:
                 ObjectHolderEntryDetailsViewModel = null;
                 break;
         }
+    }
+
+    public void UpdateDListDisassembly()
+    {
+        Debug.Assert(DisasDList != null);
+        string text;
+        try
+        {
+            F3DZEX.Disassembler disas = new F3DZEX.Disassembler(DisasDList, F3DZEXDisasConfig);
+            var lines = disas.Disassemble();
+            StringWriter sw = new StringWriter();
+            lines.ForEach(s => sw.WriteLine(s));
+            text = sw.ToString();
+        }
+        catch (Exception)
+        {
+            text = "ERROR";
+        }
+        ObjectHolderEntryDetailsViewModel = new TextOHEDViewModel()
+        {
+            Text = text
+        };
     }
 
     static private F3DZEX.Memory.Segment EMPTY_DLIST_SEGMENT = F3DZEX.Memory.Segment.FromFill("Empty Dlist", new byte[] { 0xDF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 });
