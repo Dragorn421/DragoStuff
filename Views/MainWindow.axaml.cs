@@ -19,6 +19,7 @@ public partial class MainWindow : Window
             PickSegmentID = OpenPickSegmentID,
             OpenObjectAnalyzer = OpenObjectAnalyzer,
             OpenDListViewer = OpenDListViewer,
+            OpenF3DZEXDisassembler = OpenF3DZEXDisassembler,
         };
         DataContext = ViewModel;
         InitializeComponent();
@@ -68,6 +69,13 @@ public partial class MainWindow : Window
     private DListViewerWindowViewModel OpenDListViewer()
     {
         var win = new DListViewerWindow();
+        win.Show();
+        return win.ViewModel;
+    }
+
+    private F3DZEXDisassemblerViewModel OpenF3DZEXDisassembler()
+    {
+        var win = new F3DZEXDisassemblerWindow();
         win.Show();
         return win.ViewModel;
     }
