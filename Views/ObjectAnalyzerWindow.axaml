@@ -51,11 +51,24 @@
                 </DataGrid>
             </DockPanel>
             <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
-            <ContentControl Grid.Column="2" Content="{Binding ObjectHolderEntryDetailsViewModel}">
-                <ContentControl.DataTemplates>
-                    <vm:OHEDViewLocator />
-                </ContentControl.DataTemplates>
-            </ContentControl>
+            <TabControl Grid.Column="2">
+                <TabItem Header="Details"
+                    IsVisible="{Binding ObjectHolderEntryDetailsViewModel,
+                                Converter={x:Static ObjectConverters.IsNotNull}}"
+                >
+                    <ContentControl Content="{Binding ObjectHolderEntryDetailsViewModel}">
+                        <ContentControl.DataTemplates>
+                            <vm:OHEDViewLocator />
+                        </ContentControl.DataTemplates>
+                    </ContentControl>
+                </TabItem>
+                <TabItem Header="Binary">
+                    <vm:HexViewerControl
+                        DataBytes="{Binding ObjectHolderEntryDataBytes}"
+                        FirstByteAddress="{Binding ObjectHolderEntryFirstByteAddress}"
+                    />
+                </TabItem>
+            </TabControl>
         </Grid>
     </DockPanel>
 </Window>

@@ -26,9 +26,6 @@ public class OHEDViewLocator : IDataTemplate
             case nameof(ImageOHEDViewModel):
                 return new ImageOHEDView();
 
-            case nameof(HexViewModel):
-                return new HexView();
-
             case nameof(VertexArrayOHEDViewModel):
                 return new VertexArrayOHEDView();
 

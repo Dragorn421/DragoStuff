@@ -125,12 +125,18 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
     }
 
     [ObservableProperty]
-    private IObjectHolderEntryDetailsViewModel? _objectHolderEntryDetailsViewModel = new EmptyOHEDViewModel();
+    private IObjectHolderEntryDetailsViewModel? _objectHolderEntryDetailsViewModel = null;
+    [ObservableProperty]
+    private byte[]? _objectHolderEntryDataBytes;
+    [ObservableProperty]
+    private uint _objectHolderEntryFirstByteAddress;
 
     public void ClearFile()
     {
         WindowTitle = DEFAULT_WINDOW_TITLE;
-        ObjectHolderEntryDetailsViewModel = new EmptyOHEDViewModel();
+        ObjectHolderEntryDetailsViewModel = null;
+        ObjectHolderEntryDataBytes = null;
+        ObjectHolderEntryFirstByteAddress = 0;
         ObjectHolderEntries.Clear();
         _game = null;
         _file = null;
@@ -183,7 +189,9 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
         Debug.Assert(_object != null);
 
         // TODO handle this better (keep the selection)
-        ObjectHolderEntryDetailsViewModel = new EmptyOHEDViewModel();
+        ObjectHolderEntryDetailsViewModel = null;
+        ObjectHolderEntryDataBytes = null;
+        ObjectHolderEntryFirstByteAddress = 0;
 
         var newObjectHolderEntries = new List<ObjectHolderEntry>();
 
@@ -218,6 +226,10 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
 
     public void OnObjectHolderEntrySelected(ObjectHolderEntry ohe)
     {
+        Debug.Assert(_object != null);
+        ObjectHolderEntryDataBytes = ohe.ObjectHolder.GetData();
+        ObjectHolderEntryFirstByteAddress = (uint)_object.OffsetOf(ohe.ObjectHolder);
+
         switch (ohe.ObjectHolder.GetEntryType())
         {
             case Z64Object.EntryType.Texture:
@@ -235,7 +247,6 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
 
             case Z64Object.EntryType.Vertex:
                 var vertexHolder = (Z64Object.VertexHolder)ohe.ObjectHolder;
-                Debug.Assert(_object != null);
                 uint vertexHolderAddress = new SegmentedAddress(_segment, _object.OffsetOf(vertexHolder)).VAddr;
                 var vertexArrayVM = new VertexArrayOHEDViewModel()
                 {
@@ -269,13 +280,7 @@ public partial class ObjectAnalyzerWindowViewModel : ObservableObject
                 break;
 
             default:
-                Debug.Assert(_object != null);
-                var hexVM = new HexViewModel()
-                {
-                    DataBytes = ohe.ObjectHolder.GetData(),
-                    FirstByteAddress = (uint)_object.OffsetOf(ohe.ObjectHolder),
-                };
-                ObjectHolderEntryDetailsViewModel = hexVM;
+                ObjectHolderEntryDetailsViewModel = null;
                 break;
         }
     }
