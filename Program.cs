@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using System;
+using System.Collections.Generic;
 using System.CommandLine;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -58,7 +60,7 @@ class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
-            .LogToTrace();
+            .LogSinkToNLog();
 
     public static int HandleArgs(string[] args)
     {
@@ -117,5 +119,56 @@ class Program
 
         int code = rootCommand.Invoke(args);
         return code;
+    }
+}
+
+
+public class AvaloniaLogSinkToNLog : Avalonia.Logging.ILogSink
+{
+    private static readonly Dictionary<Avalonia.Logging.LogEventLevel, NLog.LogLevel> LOG_LEVELS_MAP = new()
+        {
+            { Avalonia.Logging.LogEventLevel.Verbose,     NLog.LogLevel.Trace },
+            { Avalonia.Logging.LogEventLevel.Debug,       NLog.LogLevel.Debug },
+            { Avalonia.Logging.LogEventLevel.Information, NLog.LogLevel.Info  },
+            { Avalonia.Logging.LogEventLevel.Warning,     NLog.LogLevel.Warn  },
+            { Avalonia.Logging.LogEventLevel.Error,       NLog.LogLevel.Error },
+            { Avalonia.Logging.LogEventLevel.Fatal,       NLog.LogLevel.Fatal },
+        };
+    static AvaloniaLogSinkToNLog()
+    {
+        // Assert LOG_LEVELS_MAP contains all of Avalonia's log levels
+        foreach (var e in Enum.GetValues<Avalonia.Logging.LogEventLevel>())
+        {
+            Debug.Assert(LOG_LEVELS_MAP.ContainsKey(e));
+        }
+    }
+
+    public NLog.Logger GetAreaLogger(string area)
+    {
+        return NLog.LogManager.GetLogger("Avalonia-" + area);
+    }
+
+    public bool IsEnabled(Avalonia.Logging.LogEventLevel level, string area)
+    {
+        return GetAreaLogger(area).IsEnabled(LOG_LEVELS_MAP[level]);
+    }
+
+    public void Log(Avalonia.Logging.LogEventLevel level, string area, object? source, string messageTemplate)
+    {
+        GetAreaLogger(area).Log(LOG_LEVELS_MAP[level], messageTemplate);
+    }
+
+    public void Log(Avalonia.Logging.LogEventLevel level, string area, object? source, string messageTemplate, params object?[] propertyValues)
+    {
+        GetAreaLogger(area).Log(LOG_LEVELS_MAP[level], messageTemplate, propertyValues);
+    }
+}
+
+public static class MyLogExtensions
+{
+    public static AppBuilder LogSinkToNLog(this AppBuilder builder)
+    {
+        Avalonia.Logging.Logger.Sink = new AvaloniaLogSinkToNLog();
+        return builder;
     }
 }
