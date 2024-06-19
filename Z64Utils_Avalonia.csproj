@@ -57,7 +57,10 @@
         https://stackoverflow.com/questions/58595807/what-is-the-difference-between-none-include-and-none-update-in-sdk-style-csp
             https://learn.microsoft.com/en-us/visualstudio/msbuild/item-element-msbuild?view=vs-2022
         -->
-        <None Update="NLog.config" CopyToOutputDirectory="PreserveNewest" />
         <None Update="Shaders/*" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
+
+    <Target Name="CopyNLogConfigToOutput" AfterTargets="Build">
+        <Copy SourceFiles="NLog-$(Configuration).config" DestinationFiles="$(OutDir)/NLog.config" />
+    </Target>
 </Project>
