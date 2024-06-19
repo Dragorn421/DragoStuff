@@ -10,7 +10,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Styling;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 public class CheckPatternControl : Control
 {

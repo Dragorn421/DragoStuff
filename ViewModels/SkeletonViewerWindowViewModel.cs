@@ -13,7 +13,7 @@ using RDP;
 using Syroot.BinaryData;
 using Z64;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 // TODO this is 100% copypaste from DListViewerWindowVM for now, adapt, refactor.
 public partial class SkeletonViewerWindowViewModel : ObservableObject

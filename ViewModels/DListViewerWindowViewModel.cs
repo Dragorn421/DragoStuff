@@ -5,7 +5,7 @@ using System.Diagnostics;
 using Avalonia.Metadata;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 public partial class DListViewerWindowViewModel : ObservableObject
 {

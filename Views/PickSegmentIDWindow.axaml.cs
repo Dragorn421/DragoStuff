@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 public partial class PickSegmentIDWindow : Window
 {

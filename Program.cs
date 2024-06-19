@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 class Program
 {

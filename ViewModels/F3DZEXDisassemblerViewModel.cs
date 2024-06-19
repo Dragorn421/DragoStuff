@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using F3DZEX.Command;
 using NLog.Config;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 public partial class F3DZEXDisassemblerViewModel : ObservableObject
 {

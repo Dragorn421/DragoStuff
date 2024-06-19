@@ -7,7 +7,7 @@ using Avalonia.Rendering;
 using OpenTK;
 using OpenTK.Mathematics;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 public abstract class OpenTKControlBaseWithCamera : OpenTKControlBase, ICustomHitTest
 {

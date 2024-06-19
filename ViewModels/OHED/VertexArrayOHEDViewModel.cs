@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 public partial class VertexArrayOHEDViewModel : ObservableObject, IObjectHolderEntryDetailsViewModel
 {

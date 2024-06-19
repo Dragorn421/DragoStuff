@@ -4,7 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Input.Platform;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 public partial class ErrorWindow : Window
 {

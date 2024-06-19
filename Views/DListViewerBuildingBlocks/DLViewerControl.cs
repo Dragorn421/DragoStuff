@@ -7,7 +7,7 @@ using F3DZEX.Command;
 using F3DZEX.Render;
 using OpenTK.Mathematics;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 public class DLViewerControl : OpenTKControlBaseWithCamera
 {

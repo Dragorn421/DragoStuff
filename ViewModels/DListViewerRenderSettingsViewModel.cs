@@ -4,7 +4,7 @@ using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using F3DZEX.Render;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 public partial class DListViewerRenderSettingsViewModel : ObservableObject
 {

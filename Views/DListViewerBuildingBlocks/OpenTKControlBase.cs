@@ -9,7 +9,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using static Avalonia.OpenGL.GlConsts;
 
-namespace Z64Utils_recreate_avalonia_ui;
+namespace Z64Utils_Avalonia;
 
 public abstract class OpenTKControlBase : OpenGlControlBase
 {
