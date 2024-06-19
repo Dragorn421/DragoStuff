@@ -124,6 +124,8 @@ public partial class MainWindowViewModel : ObservableObject
     public void ObjectAnalyzerCommand()
     {
         Debug.Assert(OpenObjectAnalyzer != null);
+        // TODO open file picker and pass file to object analyzer
+        // (this requires refactoring out Z64Game usage which is only available when a full rom is loaded)
         OpenObjectAnalyzer();
     }
 
