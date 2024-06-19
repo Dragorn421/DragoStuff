@@ -376,8 +376,8 @@ namespace F3DZEX.Render
                 Init();
 
             CheckGLErros();
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.ClearColor(CurrentConfig.BackColor);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             CheckGLErros();
 
             if (RenderFailed())
