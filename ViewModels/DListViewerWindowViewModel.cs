@@ -26,7 +26,7 @@ public partial class DListViewerWindowViewModel : ObservableObject
     private string? _renderError;
 
     // Provided by the view
-    public Func<DListViewerRenderSettingsViewModel?>? OpenDListViewerRenderSettings;
+    public Func<Func<DListViewerRenderSettingsViewModel>, DListViewerRenderSettingsViewModel?>? OpenDListViewerRenderSettings;
 
     public DListViewerWindowViewModel()
     {
@@ -113,24 +113,17 @@ public partial class DListViewerWindowViewModel : ObservableObject
     public void OpenRenderSettingsCommand()
     {
         Debug.Assert(OpenDListViewerRenderSettings != null);
-        var vm = OpenDListViewerRenderSettings();
+        Debug.Assert(Renderer != null);
+        var vm = OpenDListViewerRenderSettings(() => new DListViewerRenderSettingsViewModel(Renderer.CurrentConfig));
         if (vm == null)
         {
             // Was already open
             return;
         }
 
-        Debug.Assert(Renderer != null);
-        vm.RendererConfig = Renderer.CurrentConfig;
-        vm.PropertyChanged += (sender, e) =>
+        vm.RendererConfigChanged += (sender, e) =>
         {
-            switch (e.PropertyName)
-            {
-                case nameof(vm.RendererConfig):
-                    Renderer.CurrentConfig = vm.RendererConfig;
-                    RenderContextChanged?.Invoke(this, new());
-                    break;
-            }
+            RenderContextChanged?.Invoke(this, new());
         };
     }
     [DependsOn(nameof(Renderer))]

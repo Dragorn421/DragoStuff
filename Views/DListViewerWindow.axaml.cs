@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 
 namespace Z64Utils_Avalonia;
@@ -22,7 +23,7 @@ public partial class DListViewerWindow : Window
         };
     }
 
-    private DListViewerRenderSettingsViewModel? OpenDListViewerRenderSettings()
+    private DListViewerRenderSettingsViewModel? OpenDListViewerRenderSettings(Func<DListViewerRenderSettingsViewModel> vmFactory)
     {
         if (_currentRenderSettingsWindow != null)
         {
@@ -30,7 +31,8 @@ public partial class DListViewerWindow : Window
             return null;
         }
 
-        _currentRenderSettingsWindow = new DListViewerRenderSettingsWindow();
+        var vm = vmFactory();
+        _currentRenderSettingsWindow = new DListViewerRenderSettingsWindow(vm);
         _currentRenderSettingsWindow.Closed += (sender, e) =>
         {
             _currentRenderSettingsWindow = null;

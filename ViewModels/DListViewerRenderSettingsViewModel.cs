@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using F3DZEX.Render;
 
@@ -45,87 +44,54 @@ public partial class DListViewerRenderSettingsViewModel : ObservableObject
     [ObservableProperty] private Avalonia.Media.Color _initialFogColor;
     [ObservableProperty] private Avalonia.Media.Color _initialBlendColor;
 
-    [ObservableProperty]
-    private Renderer.Config _rendererConfig;
+    // A reference to the _rendererConfig object passed to the constructor is kept,
+    // and that object is updated directly.
+    // The RendererConfigChanged event is raised when the config object is updated.
+    private readonly Renderer.Config _rendererConfig;
+    public event EventHandler? RendererConfigChanged;
 
-    private bool _recursionFlag = false;
-
-    public DListViewerRenderSettingsViewModel()
+    public DListViewerRenderSettingsViewModel(Renderer.Config rendererConfig)
     {
+        _rendererConfig = rendererConfig;
+
+        GridScale = rendererConfig.GridScale;
+        ShowGrid = rendererConfig.ShowGrid;
+        ShowAxis = rendererConfig.ShowAxis;
+        ShowGLInfo = rendererConfig.ShowGLInfo;
+        RenderMode = rendererConfig.RenderMode;
+        EnabledLighting = rendererConfig.EnabledLighting;
+        DrawNormals = rendererConfig.DrawNormals;
+        NormalColor = BuiltinToAvaloniaColor(rendererConfig.NormalColor);
+        HighlightColor = BuiltinToAvaloniaColor(rendererConfig.HighlightColor);
+        WireframeColor = BuiltinToAvaloniaColor(rendererConfig.WireframeColor);
+        BackColor = BuiltinToAvaloniaColor(rendererConfig.BackColor);
+        InitialPrimColor = BuiltinToAvaloniaColor(rendererConfig.InitialPrimColor);
+        InitialEnvColor = BuiltinToAvaloniaColor(rendererConfig.InitialEnvColor);
+        InitialFogColor = BuiltinToAvaloniaColor(rendererConfig.InitialFogColor);
+        InitialBlendColor = BuiltinToAvaloniaColor(rendererConfig.InitialBlendColor);
+
         PropertyChanged += (sender, e) =>
         {
-            // _recursionFlag prevents only partially loading the initial RendererConfig due to recursive propchanged
-            // TODO handle better...
-            if (_recursionFlag)
-                return;
-            try
+            switch (e.PropertyName)
             {
-                _recursionFlag = true;
-                switch (e.PropertyName)
-                {
-                    case nameof(GridScale):
-                    case nameof(ShowGrid):
-                    case nameof(ShowAxis):
-                    case nameof(ShowGLInfo):
-                    case nameof(RenderMode):
-                    case nameof(EnabledLighting):
-                    case nameof(DrawNormals):
-                    case nameof(NormalColor):
-                    case nameof(HighlightColor):
-                    case nameof(WireframeColor):
-                    case nameof(BackColor):
-                    case nameof(InitialPrimColor):
-                    case nameof(InitialEnvColor):
-                    case nameof(InitialFogColor):
-                    case nameof(InitialBlendColor):
-                        Debug.WriteLine($"single prop {e.PropertyName} changed");
-                        RendererConfig = new()
-                        {
-                            GridScale = GridScale,
-                            ShowGrid = ShowGrid,
-                            ShowAxis = ShowAxis,
-                            ShowGLInfo = ShowGLInfo,
-                            RenderMode = RenderMode,
-                            EnabledLighting = EnabledLighting,
-                            DrawNormals = DrawNormals,
-                            NormalColor = AvaloniaToBuiltinColor(NormalColor),
-                            HighlightColor = AvaloniaToBuiltinColor(HighlightColor),
-                            WireframeColor = AvaloniaToBuiltinColor(WireframeColor),
-                            BackColor = AvaloniaToBuiltinColor(BackColor),
-                            InitialPrimColor = AvaloniaToBuiltinColor(InitialPrimColor),
-                            InitialEnvColor = AvaloniaToBuiltinColor(InitialEnvColor),
-                            InitialFogColor = AvaloniaToBuiltinColor(InitialFogColor),
-                            InitialBlendColor = AvaloniaToBuiltinColor(InitialBlendColor),
-                        };
-                        Debug.WriteLine($"set RendererConfig to {RendererConfig}");
-                        break;
-                    case nameof(RendererConfig):
-                        Debug.WriteLine($"loading from RendererConfig={RendererConfig}");
-                        GridScale = RendererConfig.GridScale;
-                        ShowGrid = RendererConfig.ShowGrid;
-                        ShowAxis = RendererConfig.ShowAxis;
-                        ShowGLInfo = RendererConfig.ShowGLInfo;
-                        RenderMode = RendererConfig.RenderMode;
-                        EnabledLighting = RendererConfig.EnabledLighting;
-                        DrawNormals = RendererConfig.DrawNormals;
-                        NormalColor = BuiltinToAvaloniaColor(RendererConfig.NormalColor);
-                        HighlightColor = BuiltinToAvaloniaColor(RendererConfig.HighlightColor);
-                        WireframeColor = BuiltinToAvaloniaColor(RendererConfig.WireframeColor);
-                        BackColor = BuiltinToAvaloniaColor(RendererConfig.BackColor);
-                        InitialPrimColor = BuiltinToAvaloniaColor(RendererConfig.InitialPrimColor);
-                        InitialEnvColor = BuiltinToAvaloniaColor(RendererConfig.InitialEnvColor);
-                        InitialFogColor = BuiltinToAvaloniaColor(RendererConfig.InitialFogColor);
-                        InitialBlendColor = BuiltinToAvaloniaColor(RendererConfig.InitialBlendColor);
-                        Debug.WriteLine("done set from RendererConfig");
-                        break;
-                }
+                case nameof(GridScale): _rendererConfig.GridScale = GridScale; break;
+                case nameof(ShowGrid): _rendererConfig.ShowGrid = ShowGrid; break;
+                case nameof(ShowAxis): _rendererConfig.ShowAxis = ShowAxis; break;
+                case nameof(ShowGLInfo): _rendererConfig.ShowGLInfo = ShowGLInfo; break;
+                case nameof(RenderMode): _rendererConfig.RenderMode = RenderMode; break;
+                case nameof(EnabledLighting): _rendererConfig.EnabledLighting = EnabledLighting; break;
+                case nameof(DrawNormals): _rendererConfig.DrawNormals = DrawNormals; break;
+                case nameof(NormalColor): _rendererConfig.NormalColor = AvaloniaToBuiltinColor(NormalColor); break;
+                case nameof(HighlightColor): _rendererConfig.HighlightColor = AvaloniaToBuiltinColor(HighlightColor); break;
+                case nameof(WireframeColor): _rendererConfig.WireframeColor = AvaloniaToBuiltinColor(WireframeColor); break;
+                case nameof(BackColor): _rendererConfig.BackColor = AvaloniaToBuiltinColor(BackColor); break;
+                case nameof(InitialPrimColor): _rendererConfig.InitialPrimColor = AvaloniaToBuiltinColor(InitialPrimColor); break;
+                case nameof(InitialEnvColor): _rendererConfig.InitialEnvColor = AvaloniaToBuiltinColor(InitialEnvColor); break;
+                case nameof(InitialFogColor): _rendererConfig.InitialFogColor = AvaloniaToBuiltinColor(InitialFogColor); break;
+                case nameof(InitialBlendColor): _rendererConfig.InitialBlendColor = AvaloniaToBuiltinColor(InitialBlendColor); break;
             }
-            finally
-            {
-                _recursionFlag = false;
-            }
+            RendererConfigChanged?.Invoke(this, new());
         };
-        RendererConfig = new();
     }
 
     public System.Drawing.Color AvaloniaToBuiltinColor(Avalonia.Media.Color c)

@@ -6,9 +6,9 @@ public partial class DListViewerRenderSettingsWindow : Window
 {
     public DListViewerRenderSettingsViewModel ViewModel { get; }
 
-    public DListViewerRenderSettingsWindow()
+    public DListViewerRenderSettingsWindow(DListViewerRenderSettingsViewModel vm)
     {
-        ViewModel = new();
+        ViewModel = vm;
         DataContext = ViewModel;
         InitializeComponent();
     }
