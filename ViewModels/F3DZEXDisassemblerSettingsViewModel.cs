@@ -22,8 +22,26 @@ public partial class F3DZEXDisassemblerSettingsViewModel : ObservableObject
     [ObservableProperty]
     private bool _static;
 
-    [ObservableProperty]
-    private F3DZEX.Disassembler.Config _disasConfig;
+    public F3DZEX.Disassembler.Config DisasConfig
+    {
+        get => new()
+        {
+            ShowAddress = ShowAddress,
+            RelativeAddress = RelativeAddress,
+            DisasMultiCmdMacro = DisasMultiCmdMacro,
+            AddressLiteral = AddressLiteral,
+            Static = Static,
+        };
+        set
+        {
+            ShowAddress = value.ShowAddress;
+            RelativeAddress = value.RelativeAddress;
+            DisasMultiCmdMacro = value.DisasMultiCmdMacro;
+            AddressLiteral = value.AddressLiteral;
+            Static = value.Static;
+        }
+    }
+    public event EventHandler? DisasConfigChanged;
 
     [ObservableProperty]
     private string _outputDisasPreview = "";
@@ -39,27 +57,12 @@ public partial class F3DZEXDisassemblerSettingsViewModel : ObservableObject
                 case nameof(DisasMultiCmdMacro):
                 case nameof(AddressLiteral):
                 case nameof(Static):
-                    DisasConfig = new()
-                    {
-                        ShowAddress = ShowAddress,
-                        RelativeAddress = RelativeAddress,
-                        DisasMultiCmdMacro = DisasMultiCmdMacro,
-                        AddressLiteral = AddressLiteral,
-                        Static = Static,
-                    };
                     UpdateDisassemblyPreview();
-                    break;
-                case nameof(DisasConfig):
-                    ShowAddress = DisasConfig.ShowAddress;
-                    RelativeAddress = DisasConfig.RelativeAddress;
-                    DisasMultiCmdMacro = DisasConfig.DisasMultiCmdMacro;
-                    AddressLiteral = DisasConfig.AddressLiteral;
-                    Static = DisasConfig.Static;
-                    UpdateDisassemblyPreview();
+                    DisasConfigChanged?.Invoke(this, new());
                     break;
             }
         };
-        DisasConfig = new();
+        UpdateDisassemblyPreview();
     }
 
     public void UpdateDisassemblyPreview()

@@ -57,14 +57,9 @@ public partial class F3DZEXDisassemblerViewModel : ObservableObject
         }
 
         vm.DisasConfig = DisasConfig;
-        vm.PropertyChanged += (sender, e) =>
+        vm.DisasConfigChanged += (sender, e) =>
         {
-            switch (e.PropertyName)
-            {
-                case nameof(vm.DisasConfig):
-                    DisasConfig = vm.DisasConfig;
-                    break;
-            }
+            DisasConfig = vm.DisasConfig;
         };
     }
 
