@@ -153,14 +153,22 @@ public class AvaloniaLogSinkToNLog : Avalonia.Logging.ILogSink
         return GetAreaLogger(area).IsEnabled(LOG_LEVELS_MAP[level]);
     }
 
+    private void LogImpl(Avalonia.Logging.LogEventLevel level, string area, Action<NLog.LogEventBuilder> setMessage)
+    {
+        NLog.Logger logger = GetAreaLogger(area);
+        NLog.LogEventBuilder logEventBuilder = new(logger, LOG_LEVELS_MAP[level]);
+        setMessage(logEventBuilder);
+        logger.Log(typeof(AvaloniaLogSinkToNLog), logEventBuilder.LogEvent);
+    }
+
     public void Log(Avalonia.Logging.LogEventLevel level, string area, object? source, string messageTemplate)
     {
-        GetAreaLogger(area).Log(LOG_LEVELS_MAP[level], messageTemplate);
+        LogImpl(level, area, eb => eb.Message(messageTemplate));
     }
 
     public void Log(Avalonia.Logging.LogEventLevel level, string area, object? source, string messageTemplate, params object?[] propertyValues)
     {
-        GetAreaLogger(area).Log(LOG_LEVELS_MAP[level], messageTemplate, propertyValues);
+        LogImpl(level, area, eb => eb.Message(messageTemplate, propertyValues));
     }
 }
 
