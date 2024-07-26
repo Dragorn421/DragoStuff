@@ -66,6 +66,7 @@
         <Copy SourceFiles="NLog-$(Configuration).config" DestinationFiles="$(OutDir)/NLog.config" />
     </Target>
     <Target Name="CopyNLogConfigToPublishOutput" AfterTargets="Publish">
-        <Copy SourceFiles="NLog-$(Configuration).config" DestinationFiles="$(PublishDir)/NLog.config" />
+        <Copy SourceFiles="NLog-$(Configuration).config"
+            DestinationFiles="$(PublishDir)/NLog.config" />
     </Target>
 </Project>
