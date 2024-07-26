@@ -15,21 +15,23 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+        <AvaloniaVersion>11.0.10</AvaloniaVersion>
     </PropertyGroup>
 
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.10" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.10" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10" />
+        <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+        <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
         <!-- Condition below is needed to remove Avalonia.Diagnostics package from build output in
         Release configuration. -->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics"
-            Version="11.0.10" />
+            Version="$(AvaloniaVersion)" />
 
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.10" />
-        <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.10" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="$(AvaloniaVersion)" />
+        <PackageReference Include="Avalonia.Controls.ColorPicker" Version="$(AvaloniaVersion)" />
 
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 
