@@ -130,7 +130,6 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     public void CheckNewReleasesCommand() { }
-    public void AboutCommand() { }
 
     //
 

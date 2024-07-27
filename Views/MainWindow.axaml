@@ -28,8 +28,8 @@
                 <MenuItem Header="Object Analyzer" Command="{Binding ObjectAnalyzerCommand}" />
             </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem Header="Check New Releases" Command="{Binding CheckNewReleasesCommand}" />
-                <MenuItem Header="About" Command="{Binding AboutCommand}" />
+                <MenuItem Header="Check New Releases" Click="OnCheckNewReleasesMenuItemClick" />
+                <MenuItem Header="About" Click="OnAboutMenuItemClick" />
             </MenuItem>
         </Menu>
         <ProgressBar DockPanel.Dock="Bottom" />

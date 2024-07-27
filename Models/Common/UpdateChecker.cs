@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.IO;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Threading;
 
 namespace Common
 {
@@ -124,22 +127,23 @@ namespace Common
     public static class UpdateChecker
     {
 
-        public const string ReleaseURL = @"https://api.github.com/repos/tom-overton/Z64Utils/releases/latest";
-        public const string CurrentTag = "v2.2.1";
-        
-        public static GithubRelease GetLatestRelease()
+        public const string ReleaseURL = @"https://api.github.com/repos/zeldaret/Z64Utils/releases/latest";
+        public static string CurrentTag => "v" + Z64Utils_Avalonia.Program.Version;
+        private static HttpClient GithubApiHttpClient = new() { BaseAddress = new("https://api.github.com") };
+        static UpdateChecker()
         {
+            GithubApiHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Z64Utils Updater");
+        }
 
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(ReleaseURL);
-            req.UserAgent = "Z64Utils Updater";
-            var resp = req.GetResponse();
-
-            using (var stream = resp.GetResponseStream())
-            {
-                StreamReader sr = new StreamReader(stream);
-                string json = sr.ReadToEnd();
-                return JsonSerializer.Deserialize<GithubRelease>(json);
-            }
+        public static async Task<GithubRelease> GetLatestRelease()
+        {
+            CancellationTokenSource timeoutTokenSource = new();
+            timeoutTokenSource.CancelAfter(TimeSpan.FromSeconds(10));
+            var resp = await GithubApiHttpClient.GetAsync(ReleaseURL, timeoutTokenSource.Token);
+            string json = await resp.Content.ReadAsStringAsync();
+            var r = JsonSerializer.Deserialize<GithubRelease>(json);
+            Debug.Assert(r != null);
+            return r;
         }
     }
 }

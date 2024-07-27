@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 
 namespace Z64Utils_Avalonia;
@@ -78,5 +79,31 @@ public partial class MainWindow : Window
         var win = new F3DZEXDisassemblerWindow();
         win.Show();
         return win.ViewModel;
+    }
+
+    public async void OnCheckNewReleasesMenuItemClick(object? sender, RoutedEventArgs args)
+    {
+        Common.GithubRelease release;
+        try
+        {
+            release = await Common.UpdateChecker.GetLatestRelease();
+        }
+        catch (Exception e)
+        {
+            var errWin = new ErrorWindow();
+            errWin.SetMessage("An error occurred while looking for updates.", e.ToString());
+            errWin.Show();
+            return;
+        }
+        string currentTag = Common.UpdateChecker.CurrentTag;
+        string latestTag = release.TagName;
+        var w = new UpdateWindow();
+        w.SetNewRelease(currentTag, latestTag, currentTag == latestTag);
+        w.Show();
+    }
+
+    public void OnAboutMenuItemClick(object? sender, RoutedEventArgs args)
+    {
+        new AboutWindow().Show();
     }
 }
