@@ -21,6 +21,7 @@ public partial class MainWindow : Window
             OpenObjectAnalyzer = OpenObjectAnalyzer,
             OpenDListViewer = OpenDListViewer,
             OpenF3DZEXDisassembler = OpenF3DZEXDisassembler,
+            OpenROMRAMConversions = OpenROMRAMConversions,
         };
         DataContext = ViewModel;
         InitializeComponent();
@@ -79,6 +80,12 @@ public partial class MainWindow : Window
         var win = new F3DZEXDisassemblerWindow();
         win.Show();
         return win.ViewModel;
+    }
+
+    private void OpenROMRAMConversions(ROMRAMConversionsWindowViewModel vm)
+    {
+        var win = new ROMRAMConversionsWindow(vm);
+        win.Show();
     }
 
     public async void OnCheckNewReleasesMenuItemClick(object? sender, RoutedEventArgs args)
