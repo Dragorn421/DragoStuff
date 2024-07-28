@@ -54,3 +54,45 @@ jobs:
           name: ${{ env.archive_name }}
           path: |
             ${{ env.archive_name }}.tar.gz
+
+  build-simpler:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        target-runtime: [linux-x64, win-x64]
+        configuration: [Debug, Release]
+
+    name: simpleapp-${{ matrix.target-runtime }}-${{ matrix.configuration }}
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      restore_args: --runtime ${{ matrix.target-runtime }}
+      build_args: --no-self-contained --configuration ${{ matrix.configuration }} --version-suffix ${{ github.sha }}
+      archive_name: build-simpler_simpleapp-${{ matrix.target-runtime }}-${{ matrix.configuration }}-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: dotnet info
+        shell: bash
+        run: |
+          dotnet --info
+
+      - name: dotnet publish
+        shell: bash
+        run: |
+          dotnet publish --output publish_out/ ${{ env.restore_args }} ${{ env.build_args }}
+
+      # Archive
+      - name: Create archive
+        shell: bash
+        run: |
+          cd publish_out
+          tar -czvf ../${{ env.archive_name }}.tar.gz *
+
+      - name: Upload archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.archive_name }}
+          path: |
+            ${{ env.archive_name }}.tar.gz
