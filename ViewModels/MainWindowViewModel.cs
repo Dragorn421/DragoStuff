@@ -59,7 +59,7 @@ public partial class MainWindowViewModel : ObservableObject
             {
                 FilePickerActive = false;
             }
-            Logger.Debug("file={filePath}", file?.Path.ToString());
+            Logger.Debug("file={filePath}", file?.TryGetLocalPath());
 
             if (file == null)
             {
