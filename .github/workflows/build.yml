@@ -34,12 +34,12 @@ jobs:
       - name: dotnet build
         shell: bash
         run: |
-          dotnet build --no-restore ${{ env.restore_args }} ${{ env.build_args }}
+          dotnet build ${{ env.restore_args }} ${{ env.build_args }}
 
       - name: dotnet publish
         shell: bash
         run: |
-          dotnet publish --no-build --output publish_out/ ${{ env.restore_args }} ${{ env.build_args }}
+          dotnet publish --output publish_out/ ${{ env.restore_args }} ${{ env.build_args }}
 
       - name: Copy versions data
         shell: bash
