@@ -21,6 +21,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: dotnet info
+        shell: bash
+        run: |
+          dotnet --info
+
       - name: dotnet restore
         shell: bash
         run: |
