@@ -22,6 +22,7 @@ public partial class MainWindow : Window
             OpenDListViewer = OpenDListViewer,
             OpenF3DZEXDisassembler = OpenF3DZEXDisassembler,
             OpenROMRAMConversions = OpenROMRAMConversions,
+            OpenTextureViewer = OpenTextureViewer,
         };
         DataContext = ViewModel;
         InitializeComponent();
@@ -85,6 +86,12 @@ public partial class MainWindow : Window
     private void OpenROMRAMConversions(ROMRAMConversionsWindowViewModel vm)
     {
         var win = new ROMRAMConversionsWindow(vm);
+        win.Show();
+    }
+
+    private void OpenTextureViewer(TextureViewerWindowViewModel vm)
+    {
+        var win = new TextureViewerWindow(vm);
         win.Show();
     }
 

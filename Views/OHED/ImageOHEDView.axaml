@@ -2,6 +2,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="using:Z64Utils_Avalonia"
     xmlns:v="using:Z64Utils_Avalonia"
+    xmlns:c="using:Z64Utils_Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -11,7 +12,7 @@
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" Text="{Binding InfoText}" />
         <Panel>
-            <v:CheckPatternControl CheckerSize="10" />
+            <c:CheckPatternControl CheckerSize="10" />
             <Panel Name="ImageWrapperPanel">
                 <Image Name="Image" Source="{Binding Image}" RenderOptions.BitmapInterpolationMode="None" />
             </Panel>

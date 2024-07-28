@@ -51,6 +51,7 @@
 
     <ItemGroup>
         <AvaloniaResource Include="Assets/**" />
+        <AvaloniaResource Include="Controls/**/Themes/Fluent.xaml" />
 
         <!-- TODO for some reason it's surprisingly unclear what the proper way to copy a file to
         the output build folder is. This may or may not be good

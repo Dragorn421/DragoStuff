@@ -28,6 +28,7 @@ public partial class MainWindowViewModel : ObservableObject
     public Func<DListViewerWindowViewModel>? OpenDListViewer;
     public Func<F3DZEXDisassemblerViewModel>? OpenF3DZEXDisassembler;
     public Action<ROMRAMConversionsWindowViewModel>? OpenROMRAMConversions;
+    public Action<TextureViewerWindowViewModel>? OpenTextureViewer;
 
     public MainWindowViewModel()
     {
@@ -130,8 +131,17 @@ public partial class MainWindowViewModel : ObservableObject
         return _game != null;
     }
 
-    public void TextureViewerCommand() { }
-    public bool CanTextureViewerCommand(object arg) { return false; }
+    public void TextureViewerCommand()
+    {
+        Debug.Assert(_game != null);
+        Debug.Assert(OpenTextureViewer != null);
+        OpenTextureViewer(new TextureViewerWindowViewModel(_game));
+    }
+    public bool CanTextureViewerCommand(object arg)
+    {
+        return _game != null;
+    }
+
     public void ObjectAnalyzerCommand()
     {
         Debug.Assert(OpenObjectAnalyzer != null);

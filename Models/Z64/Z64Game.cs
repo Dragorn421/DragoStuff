@@ -348,4 +348,12 @@ namespace Z64
         }
 
     }
+
+    public enum AddressType
+    {
+        ROM,
+        VROM,
+        VRAM
+    }
+
 }
