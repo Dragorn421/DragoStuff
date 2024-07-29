@@ -44,11 +44,6 @@ jobs:
         run: |
           dotnet publish --output publish_out/ ${{ env.restore_args }} ${{ env.build_args }}
 
-      - name: Copy versions data
-        shell: bash
-        run: |
-          cp -r -t publish_out/
-
       # Archive
       - name: Create archive
         shell: bash
