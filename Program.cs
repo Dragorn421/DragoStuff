@@ -41,6 +41,24 @@ class Program
                 return code;
 
             BuildAvaloniaApp()
+                .With(new Win32PlatformOptions()
+                {
+                    RenderingMode = new List<Win32RenderingMode>()
+                    {
+                        // Replace using ANGLE with native OpenGL
+                        // However this is "not recommended"
+                        // https://github.com/AvaloniaUI/Avalonia/discussions/6396
+                        // https://github.com/AvaloniaUI/Avalonia/discussions/9393
+                        // A better option would be to keep Avalonia rendering with whatever it wants,
+                        // and use OpenGL to render to a surface that we would then pass back to Avalonia
+                        // https://github.com/AvaloniaUI/Avalonia/discussions/5432
+                        // ? https://github.com/AvaloniaUI/Avalonia/discussions/6842
+                        // ? https://github.com/AvaloniaUI/Avalonia/pull/9639
+                        // https://github.com/AvaloniaUI/Avalonia/discussions/16188
+                        Win32RenderingMode.Wgl,
+                        Win32RenderingMode.Software,
+                    }
+                })
                .StartWithClassicDesktopLifetime(args);
             return EXIT_SUCCESS;
         }
