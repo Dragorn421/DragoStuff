@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024 Dragorn421
+// SPDX-License-Identifier: CC0-1.0
+
 using System.IO;
 
 namespace avalonia_glsl_investigate;

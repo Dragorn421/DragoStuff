@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2024 Dragorn421
+// SPDX-License-Identifier: CC0-1.0
+
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;

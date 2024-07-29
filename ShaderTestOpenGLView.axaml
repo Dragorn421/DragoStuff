@@ -1,3 +1,4 @@
+<!-- Copyright 2024 Dragorn421, licensed under CC0-1.0 -->
 <UserControl xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:avalonia_glsl_investigate"

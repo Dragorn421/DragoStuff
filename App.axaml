@@ -1,3 +1,4 @@
+<!-- Copyright 2024 Dragorn421, licensed under CC0-1.0 -->
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="avalonia_glsl_investigate.App"
