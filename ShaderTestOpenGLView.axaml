@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:avalonia_glsl_investigate"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="avalonia_glsl_investigate.ShaderTestOpenGLView"
+    x:DataType="local:ShaderTestOpenGLVM">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <TextBlock Text="Error: " />
+            <TextBlock Text="{Binding HasError}" />
+        </StackPanel>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding Label}" />
+        <TextBox DockPanel.Dock="Top" Text="{Binding Log}" IsReadOnly="true" />
+        <local:ShaderTestOpenGLControl
+            VertShaderSrc="{Binding VertShaderSrc}" FragShaderSrc="{Binding FragShaderSrc}"
+            Log="{Binding Log}" HasError="{Binding HasError}" />
+    </DockPanel>
+</UserControl>
