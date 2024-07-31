@@ -43,7 +43,7 @@ class Program
             .With(new X11PlatformOptions()
             {
                 // For testing OpenTK can use OpenGL 4 regardless of the OpenGL version Avalonia uses
-                GlProfiles = new List<GlVersion>() { new(GlProfileType.OpenGLES, 3, 0) }
+                //GlProfiles = new List<GlVersion>() { new(GlProfileType.OpenGLES, 3, 0) }
             })
             .UsePlatformDetect()
             .WithInterFont()
