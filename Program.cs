@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: CC0-1.0
 
 using Avalonia;
+using Avalonia.OpenGL;
 using System;
 using System.Collections.Generic;
 
@@ -19,6 +20,7 @@ class Program
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
+            /*
             .With(new Win32PlatformOptions()
             {
                 RenderingMode = new List<Win32RenderingMode>()
@@ -36,6 +38,12 @@ class Program
                     Win32RenderingMode.Wgl,
                     Win32RenderingMode.Software,
                 }
+            })
+            */
+            .With(new X11PlatformOptions()
+            {
+                // For testing OpenTK can use OpenGL 4 regardless of the OpenGL version Avalonia uses
+                GlProfiles = new List<GlVersion>() { new(GlProfileType.OpenGLES, 3, 0) }
             })
             .UsePlatformDetect()
             .WithInterFont()

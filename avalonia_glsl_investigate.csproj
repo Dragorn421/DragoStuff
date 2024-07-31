@@ -19,6 +19,7 @@
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.0" />
 
     <PackageReference Include="OpenTK" Version="4.8.2" />
+    <PackageReference Include="Silk.NET" Version="2.21.0" />
   </ItemGroup>
 
   <ItemGroup>

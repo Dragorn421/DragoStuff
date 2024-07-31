@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace avalonia_glsl_investigate;
 
-public class ShaderTestOpenGLVM : INotifyPropertyChanged
+public class ShaderTestOpenGLTKVM : INotifyPropertyChanged
 {
     public string Label { get; }
     public string VertShaderSrc { get; }
@@ -17,7 +17,7 @@ public class ShaderTestOpenGLVM : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public ShaderTestOpenGLVM(string label, string glslVersion = "330 core")
+    public ShaderTestOpenGLTKVM(string label, string glslVersion = "330 core")
     {
         Label = label;
         VertShaderSrc = GLTriangleData.GetVertShaderSrc(glslVersion);

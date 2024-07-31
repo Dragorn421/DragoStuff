@@ -5,9 +5,9 @@ using Avalonia.Controls;
 
 namespace avalonia_glsl_investigate;
 
-public partial class ShaderTestOpenGLView : UserControl
+public partial class ShaderTestOpenTKView : UserControl
 {
-    public ShaderTestOpenGLView()
+    public ShaderTestOpenTKView()
     {
         // The DataContext is expected to be of a certain type
         // by default / initially the DataContext is inherited from the parent which

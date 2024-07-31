@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-    x:Class="avalonia_glsl_investigate.ShaderTestOpenGLView"
+    x:Class="avalonia_glsl_investigate.ShaderTestOpenTKView"
     x:DataType="local:ShaderTestOpenGLTKVM"
 >
     <DockPanel>
@@ -15,7 +15,7 @@
         </StackPanel>
         <TextBlock DockPanel.Dock="Top" Text="{Binding Label}" />
         <TextBox DockPanel.Dock="Top" Text="{Binding Log}" IsReadOnly="true" />
-        <local:ShaderTestOpenGLControl
+        <local:ShaderTestOpenTKControl
             VertShaderSrc="{Binding VertShaderSrc}" FragShaderSrc="{Binding FragShaderSrc}"
             Log="{Binding Log}" HasError="{Binding HasError}" 
             MinWidth="300" MinHeight="200"
