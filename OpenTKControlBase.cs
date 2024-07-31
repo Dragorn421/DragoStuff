@@ -54,7 +54,6 @@ public abstract class OpenTKControlBase : ContentControl
         _updateQueued = false;
         Render();
         _win.ProcessEvents(0.001);
-        QueueNextFrame();
     }
 
     private NativeWindow? _win = null;
@@ -75,7 +74,16 @@ public abstract class OpenTKControlBase : ContentControl
         _win.MakeCurrent(); // inside new NativeWindow anyway
         _win.FramebufferResize += e =>
         {
+            Debug.WriteLine("_win.FramebufferResize");
             Dispatcher.UIThread.Invoke(QueueNextFrame);
+        };
+        SizeChanged += (sender, e) =>
+        {
+            Debug.WriteLine("OpenTKControlBase.SizeChanged");
+            PixelSize pixelSize = GetPixelSize();
+            Vector2i pixelSizeVec2 = new(pixelSize.Width, pixelSize.Height);
+            _win.ClientSize = pixelSizeVec2;
+            QueueNextFrame();
         };
 
         CheckError();
@@ -133,7 +141,7 @@ public abstract class OpenTKControlBase : ContentControl
             }
             CheckError();
 
-            if (_lastScreenshot < DateTime.Now - TimeSpan.FromSeconds(30))
+            if (_lastScreenshot < DateTime.Now - TimeSpan.FromMilliseconds(10))
             {
                 Debug.WriteLine(">screenshot");
                 _lastScreenshot = DateTime.Now;
