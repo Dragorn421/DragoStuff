@@ -68,7 +68,7 @@ public abstract class OpenTKControlBase : ContentControl
             {
                 //APIVersion = new(3, 3), // doesn't work?
                 //AutoLoadBindings = false, // doesn't prevent context switch (lol)
-                StartVisible = false,
+                //StartVisible = false,
             });
         //*/
         _win.MakeCurrent(); // inside new NativeWindow anyway
@@ -141,7 +141,7 @@ public abstract class OpenTKControlBase : ContentControl
             }
             CheckError();
 
-            if (_lastScreenshot < DateTime.Now - TimeSpan.FromMilliseconds(10))
+            if (false && _lastScreenshot < DateTime.Now - TimeSpan.FromMilliseconds(10))
             {
                 Debug.WriteLine(">screenshot");
                 _lastScreenshot = DateTime.Now;
