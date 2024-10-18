@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "name": "N64",
+            "includePath": [
+                "build/libdragon/mips64-elf/include",
+                "."
+            ],
+            "defines": [],
+            "compilerPath": "${env:N64_GCCPREFIX}/bin/mips64-elf-gcc",
+            "cStandard": "c17",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
