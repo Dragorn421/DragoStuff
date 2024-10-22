@@ -9,9 +9,15 @@ assets = {
     "mystrings": 2,
 }
 
+dlls = [
+    "myso",
+    "myso_hello",
+]
+
 script_assets = """
     _offset = .;
 """ + "".join(
+    # TODO is AT() needed/useful???
     f"""
     .assets.{_name} {_seg << 24:#08X} (OVERLAY) : AT(_offset) {{
         KEEP(build/assets/{_name}/* (.data* .rodata*))
@@ -22,8 +28,32 @@ script_assets = """
     for _name, _seg in assets.items()
 )
 
+script_dlls = """
+    . = 0x80800000;
+""" + "".join(
+    f"""
+    dlls.{_name} (OVERLAY) : {{
+        KEEP(build/src/dlls/{_name}/dll.o (dll.code))
+    }}
+    dlls.bss.{_name} (NOLOAD) : {{
+        KEEP(build/src/dlls/{_name}/dll.o (dll.code.bss))
+    }} :ptnul
+"""
+    for _name in dlls
+)
+
+script_dlls_relocs = "".join(
+    f"""
+    dlls.rel.{_name} (OVERLAY) : {{
+        KEEP(build/src/dlls/{_name}/dll.o (dll.rel))
+    }}
+"""
+    for _name in dlls
+)
+
 Path("build/ldscript.ld").write_text(
-    """
+    (
+        """
 /* based on libdragon's n64.ld */
 
 OUTPUT_FORMAT ("elf32-bigmips", "elf32-bigmips", "elf32-littlemips")
@@ -35,6 +65,7 @@ PHDRS
 {
     irq PT_LOAD AT ( 0x80000000 );
     main PT_LOAD AT ( 0x80000400 );
+    ptnul PT_NULL;
 }
 
 SECTIONS {
@@ -136,14 +167,22 @@ SECTIONS {
     . = ALIGN(8);
 
 """
-    + script_assets
-    + """
+        + script_assets
+        + script_dlls
+        + script_dlls_relocs
+        + """
 
     /DISCARD/ : {
+        build/assets/* (*)
+        build/src/dlls/* (*)
 """
-    + "".join(f"        build/assets/{_name}/* (*)\n" for _name in assets.keys())
-    + """
+        #+ "".join(f"        build/assets/{_name}/* (*)\n" for _name in assets.keys())
+        + """
     }
 }
 """
+    ).replace(
+        "EXCLUDE_FILE(build/assets/*)",
+        "EXCLUDE_FILE(build/assets/* build/src/dlls/*)",
+    )
 )

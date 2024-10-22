@@ -19,13 +19,27 @@ code_SRCS := $(wildcard src/*.c)
 code_OBJS := $(foreach f,$(code_SRCS),$(BUILD_DIR)/$(f:.c=.o))
 assets_SRCS := $(shell find assets -name '*.c')
 assets_OBJS := $(foreach f,$(assets_SRCS),$(BUILD_DIR)/$(f:.c=.o))
+dlls_OBJS :=
 
 CFLAGS += -G0 -I.
 
-$(ELF): build/ldscript.ld $(code_OBJS) $(assets_OBJS)
+include dlls.mk
+
+$(BUILD_DIR)/src/dlls/%/dll.partial.o:
 	@mkdir -p $(dir $@)
 	@echo "    [LD] $@"
-	$(N64_CXX) -o $@ $(code_OBJS) $(assets_OBJS) -lc -Tbuild/ldscript.ld $(patsubst %,-Wl$(COMMA)%,$(filter-out -Tn64.ld,$(LDFLAGS))) -Wl,-Map=$(ELF:.elf=.map)
+	$(N64_LD) -r -Tdllcode.ld $^ -o $@
+
+$(BUILD_DIR)/src/dlls/%/dll.o: $(BUILD_DIR)/src/dlls/%/dll.partial.o
+	@mkdir -p $(dir $@)
+	@echo "    [mkdllrel] $@"
+	python3 mkdllrel.py $< $(@:.o=.bin)
+	$(N64_OBJCOPY) --add-section dll.rel=$(@:.o=.bin) $< $@
+
+$(ELF): build/ldscript.ld $(code_OBJS) $(assets_OBJS) $(dlls_OBJS)
+	@mkdir -p $(dir $@)
+	@echo "    [LD] $@"
+	$(N64_CXX) -o $@ $(code_OBJS) $(assets_OBJS) $(dlls_OBJS) -lc -Tbuild/ldscript.ld $(patsubst %,-Wl$(COMMA)%,$(filter-out -Tn64.ld,$(LDFLAGS))) -Wl,-Map=$(ELF:.elf=.map)
 	$(N64_SIZE) -G $@
 
 build/ldscript.ld: mkldscript.py
