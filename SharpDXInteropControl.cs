@@ -2,6 +2,7 @@
 
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -9,6 +10,11 @@ using Avalonia.LogicalTree;
 using Avalonia.Platform;
 using Avalonia.Rendering;
 using Avalonia.Rendering.Composition;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.Wgl;
+using OpenTK.Platform.Windows;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -97,6 +103,8 @@ public class SharpDXInteropControl : Control
     private DeviceContext? _context;
     private PixelSize _lastSize;
 
+    private NativeWindow? _openTKWindow;
+
     protected (bool success, string info) InitializeGraphicsResources(
         Compositor compositor,
         CompositionDrawingSurface surface,
@@ -132,6 +140,9 @@ public class SharpDXInteropControl : Control
         );
         _swapchain = new D3D11Swapchain(_device, interop, surface);
         _context = _device.ImmediateContext;
+
+        _openTKWindow = new NativeWindow(new() { StartVisible = true, ClientSize = new(100, 100) });
+
         return (true, $"D3D11 ({_device.FeatureLevel}) {adapter.Description1.Description}");
     }
 
@@ -145,7 +156,13 @@ public class SharpDXInteropControl : Control
 
         Utilities.Dispose(ref _context);
         Utilities.Dispose(ref _device);
+
+        _openTKWindow?.Close();
+        _openTKWindow = null;
     }
+
+    [DllImport("opengl32.dll")]
+    private static extern IntPtr wglGetCurrentDC();
 
     protected void RenderFrame(PixelSize pixelSize)
     {
@@ -164,6 +181,49 @@ public class SharpDXInteropControl : Control
             // Clear views
             context.ClearRenderTargetView(renderView, new RawColor4(1, 0, 0, 1));
 
+            _openTKWindow!.Context.MakeCurrent();
+
+            Wgl.LoadBindings(new GLFWBindingsContext());
+
+            GL.ClearColor(0, 1, 0, 1);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+
+            IntPtr hDC = wglGetCurrentDC();
+            if (hDC == IntPtr.Zero)
+                throw new InvalidOperationException(
+                    "No current hDC. Make sure OpenGL context is current."
+                );
+            Console.WriteLine(Wgl.Arb.GetExtensionsString(hDC));
+            string[] extensions = Wgl
+                .Arb.GetExtensionsString(hDC)
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            bool hasInterop = extensions.Contains("WGL_NV_DX_interop");
+            Console.WriteLine($"NV_DX_interop supported? {hasInterop}");
+            if (!hasInterop)
+                throw new PlatformNotSupportedException(
+                    "NV_DX_interop not available on this device."
+                );
+
+            Console.WriteLine("DXOpenDeviceNV");
+
+            var hDevice = Wgl.DXOpenDeviceNV(_device.NativePointer);
+
+            GL.GenTextures(1, out uint gl_name);
+
+            var hCfb = Wgl.DXRegisterObjectNV(
+                hDevice,
+                renderView.NativePointer, // most likely **wrong**
+                gl_name,
+                (int)TextureTargetMultisample2d.Texture2DMultisample,
+                WGL_NV_DX_interop.AccessReadWrite
+            );
+
+            Wgl.DXUnregisterObjectNV(hDevice, hCfb);
+
+            Wgl.DXCloseDeviceNV(hDevice);
+
+            _openTKWindow.Context.MakeNoneCurrent();
+
             _context!.Flush();
         }
     }
@@ -177,5 +237,10 @@ public class SharpDXInteropControl : Control
         _device.ImmediateContext.Rasterizer.SetViewport(
             new Viewport(0, 0, size.Width, size.Height, 0.0f, 1.0f)
         );
+
+        _openTKWindow!.ClientSize = (size.Width, size.Height);
+        _openTKWindow.Context.MakeCurrent();
+        GL.Viewport(0, 0, size.Width, size.Height);
+        _openTKWindow.Context.MakeNoneCurrent();
     }
 }
