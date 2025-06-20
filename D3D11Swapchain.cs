@@ -1,6 +1,8 @@
 // Copied and adapted from https://github.com/AvaloniaUI/Avalonia/blob/release/11.3.0/samples/GpuInterop/D3DDemo/D3D11Swapchain.cs
 
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Platform;
@@ -12,8 +14,11 @@ using DxgiResource = SharpDX.DXGI.Resource;
 
 namespace avalonia_gl_interop;
 
-class D3D11Swapchain : SwapchainBase<D3D11SwapchainImage>
+class D3D11Swapchain
 {
+    protected ICompositionGpuInterop Interop { get; }
+    protected CompositionDrawingSurface Target { get; }
+    private readonly List<D3D11SwapchainImage> _pendingImages = new();
     private readonly D3DDevice _device;
 
     public D3D11Swapchain(
@@ -21,28 +26,87 @@ class D3D11Swapchain : SwapchainBase<D3D11SwapchainImage>
         ICompositionGpuInterop interop,
         CompositionDrawingSurface target
     )
-        : base(interop, target)
     {
+        Interop = interop;
+        Target = target;
         _device = device;
     }
 
-    protected override D3D11SwapchainImage CreateImage(PixelSize size) =>
-        new(_device, size, Interop, Target);
-
-    public IDisposable BeginDraw(PixelSize size, out RenderTargetView view)
+    D3D11SwapchainImage? CleanupAndFindNextImage(PixelSize size)
     {
-        var rv = BeginDrawCore(size, out var image);
-        view = image.RenderTargetView;
+        D3D11SwapchainImage? firstFound = null;
+        var foundMultiple = false;
+
+        for (var c = _pendingImages.Count - 1; c > -1; c--)
+        {
+            var image = _pendingImages[c];
+            var ready =
+                image.LastPresent == null || image.LastPresent.Status == TaskStatus.RanToCompletion;
+            var matches = image.Size == size;
+            if (image.LastPresent?.IsFaulted == true || (!matches && ready))
+            {
+                _ = image.DisposeAsync();
+                _pendingImages.RemoveAt(c);
+            }
+
+            if (matches && ready)
+            {
+                if (firstFound == null)
+                    firstFound = image;
+                else
+                    foundMultiple = true;
+            }
+        }
+
+        // We are making sure that there was at least one image of the same size in flight
+        // Otherwise we might encounter UI thread lockups
+        return foundMultiple ? firstFound : null;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        foreach (var img in _pendingImages)
+            await img.DisposeAsync();
+    }
+
+    class AnonymousDisposable : IDisposable
+    {
+        private volatile Action? _dispose;
+
+        public AnonymousDisposable(Action dispose)
+        {
+            _dispose = dispose;
+        }
+
+        public void Dispose()
+        {
+            Interlocked.Exchange(ref _dispose, null)?.Invoke();
+        }
+    }
+
+    public IDisposable BeginDraw(PixelSize size, out D3D11SwapchainImage image)
+    {
+        var img = CleanupAndFindNextImage(size) ?? new(_device, size, Interop, Target);
+
+        img.BeginDraw();
+        _pendingImages.Remove(img);
+        var rv = new AnonymousDisposable(() =>
+        {
+            img.Present();
+            _pendingImages.Add(img);
+        });
+        image = img;
         return rv;
     }
 }
 
-public class D3D11SwapchainImage : ISwapchainImage
+public class D3D11SwapchainImage
 {
     public PixelSize Size { get; }
     private readonly ICompositionGpuInterop _interop;
     private readonly CompositionDrawingSurface _target;
     private readonly Texture2D _texture;
+    public Texture2D Texture => _texture;
     private readonly KeyedMutex _mutex;
     private readonly IntPtr _handle;
     private PlatformGraphicsExternalImageProperties _properties;

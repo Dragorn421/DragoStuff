@@ -23,12 +23,10 @@ class Program
         catch (Exception e)
         {
             Console.Write(e);
+            Console.ReadLine();
             throw;
         }
-        finally
-        {
-            Console.ReadLine();
-        }
+        Console.ReadLine();
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.

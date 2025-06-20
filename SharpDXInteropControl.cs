@@ -60,21 +60,17 @@ public class SharpDXInteropControl : Control
         _visual.Size = new(Bounds.Width, Bounds.Height);
         _visual.Surface = Surface;
         ElementComposition.SetElementChildVisual(this, _visual);
-        var (res, info) = await DoInitialize(_compositor, Surface);
+        var interop = await _compositor.TryGetCompositionGpuInterop();
+        bool res;
+        string info;
+        if (interop == null)
+            (res, info) = (false, "Compositor doesn't support interop for the current backend");
+        else
+            (res, info) = InitializeGraphicsResources(Surface, interop);
+        Console.WriteLine(info);
         _info = info;
         _initialized = res;
         QueueNextFrame();
-    }
-
-    async Task<(bool success, string info)> DoInitialize(
-        Compositor compositor,
-        CompositionDrawingSurface compositionDrawingSurface
-    )
-    {
-        var interop = await compositor.TryGetCompositionGpuInterop();
-        if (interop == null)
-            return (false, "Compositor doesn't support interop for the current backend");
-        return InitializeGraphicsResources(compositor, compositionDrawingSurface, interop);
     }
 
     void QueueNextFrame()
@@ -106,7 +102,6 @@ public class SharpDXInteropControl : Control
     private NativeWindow? _openTKWindow;
 
     protected (bool success, string info) InitializeGraphicsResources(
-        Compositor compositor,
         CompositionDrawingSurface surface,
         ICompositionGpuInterop interop
     )
@@ -173,13 +168,13 @@ public class SharpDXInteropControl : Control
             _lastSize = pixelSize;
             Resize(pixelSize);
         }
-        using (_swapchain!.BeginDraw(pixelSize, out var renderView))
+        using (_swapchain!.BeginDraw(pixelSize, out var image))
         {
-            _device!.ImmediateContext.OutputMerger.SetTargets(renderView);
+            _device!.ImmediateContext.OutputMerger.SetTargets(image.RenderTargetView);
             var context = _device.ImmediateContext;
 
             // Clear views
-            context.ClearRenderTargetView(renderView, new RawColor4(1, 0, 0, 1));
+            context.ClearRenderTargetView(image.RenderTargetView, new RawColor4(1, 0, 0, 1));
 
             _openTKWindow!.Context.MakeCurrent();
 
@@ -212,11 +207,13 @@ public class SharpDXInteropControl : Control
 
             var hCfb = Wgl.DXRegisterObjectNV(
                 hDevice,
-                renderView.NativePointer, // most likely **wrong**
+                image.Texture.NativePointer, // wrong?
                 gl_name,
                 (int)TextureTargetMultisample2d.Texture2DMultisample,
                 WGL_NV_DX_interop.AccessReadWrite
             );
+
+            // TODO
 
             Wgl.DXUnregisterObjectNV(hDevice, hCfb);
 
