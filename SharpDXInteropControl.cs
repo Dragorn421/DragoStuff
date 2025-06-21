@@ -203,6 +203,11 @@ public class SharpDXInteropControl : Control
 
             var hDevice = Wgl.DXOpenDeviceNV(_device.NativePointer);
 
+            if (hDevice == IntPtr.Zero)
+            {
+                throw new Exception("DXOpenDeviceNV failed");
+            }
+
             GL.GenTextures(1, out uint gl_name);
 
             var hCfb = Wgl.DXRegisterObjectNV(
@@ -212,6 +217,11 @@ public class SharpDXInteropControl : Control
                 (int)TextureTargetMultisample2d.Texture2DMultisample,
                 WGL_NV_DX_interop.AccessReadWrite
             );
+
+            if (hCfb == IntPtr.Zero)
+            {
+                throw new Exception("DXRegisterObjectNV failed");
+            }
 
             // TODO
 
