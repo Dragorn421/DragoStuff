@@ -32,6 +32,15 @@ public class SharpDXInteropControl : Control
 
     protected CompositionDrawingSurface? Surface { get; private set; }
 
+    public SharpDXInteropControl()
+    {
+        SizeChanged += (sender, e) =>
+        {
+            Console.WriteLine("SizeChanged");
+            QueueNextFrame();
+        };
+    }
+
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
@@ -136,13 +145,17 @@ public class SharpDXInteropControl : Control
         _swapchain = new D3D11Swapchain(_device, interop, surface);
         _context = _device.ImmediateContext;
 
-        _openTKWindow = new NativeWindow(new() { StartVisible = true, ClientSize = new(100, 100) });
+        _openTKWindow = new NativeWindow(
+            new() { StartVisible = false, ClientSize = new(100, 100) }
+        );
 
         return (true, $"D3D11 ({_device.FeatureLevel}) {adapter.Description1.Description}");
     }
 
     protected void FreeGraphicsResources()
     {
+        Console.WriteLine("FreeGraphicsResources");
+
         if (_swapchain is not null)
         {
             _swapchain.DisposeAsync().GetAwaiter().GetResult();
@@ -152,7 +165,7 @@ public class SharpDXInteropControl : Control
         Utilities.Dispose(ref _context);
         Utilities.Dispose(ref _device);
 
-        _openTKWindow?.Close();
+        _openTKWindow?.Dispose();
         _openTKWindow = null;
     }
 
@@ -267,6 +280,7 @@ public class SharpDXInteropControl : Control
 
     private void Resize(PixelSize size)
     {
+        Console.WriteLine($"Resize {size.Width}x{size.Height}");
         if (_device is null)
             return;
 
