@@ -178,10 +178,9 @@ public class SharpDXInteropControl : Control
 
             _openTKWindow!.Context.MakeCurrent();
 
-            Wgl.LoadBindings(new GLFWBindingsContext());
+            GL.DebugMessageCallback(MyGLDebugMessageCallback, IntPtr.Zero);
 
-            GL.ClearColor(0, 1, 0, 1);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            Wgl.LoadBindings(new GLFWBindingsContext());
 
             IntPtr hDC = wglGetCurrentDC();
             if (hDC == IntPtr.Zero)
@@ -214,7 +213,7 @@ public class SharpDXInteropControl : Control
                 hDevice,
                 image.Texture.NativePointer, // wrong?
                 gl_name,
-                (int)TextureTargetMultisample2d.Texture2DMultisample,
+                (int)TextureTarget2d.Texture2D,
                 WGL_NV_DX_interop.AccessReadWrite
             );
 
@@ -223,7 +222,24 @@ public class SharpDXInteropControl : Control
                 throw new Exception("DXRegisterObjectNV failed");
             }
 
-            // TODO
+            var framebufferName = GL.GenFramebuffer();
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, framebufferName);
+            GL.FramebufferTexture(
+                FramebufferTarget.Framebuffer,
+                FramebufferAttachment.ColorAttachment0,
+                gl_name,
+                0
+            );
+            GL.DrawBuffer(DrawBufferMode.ColorAttachment0);
+            var fbStatus = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+            if (fbStatus != FramebufferErrorCode.FramebufferComplete)
+            {
+                throw new Exception($"incomplete framebuffer: {fbStatus}");
+            }
+
+            GL.Viewport(0, 0, 100, 100); // TODO
+            GL.ClearColor(0, 1, 0, 1);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
 
             Wgl.DXUnregisterObjectNV(hDevice, hCfb);
 
@@ -233,6 +249,20 @@ public class SharpDXInteropControl : Control
 
             _context!.Flush();
         }
+    }
+
+    private void MyGLDebugMessageCallback(
+        DebugSource source,
+        DebugType type,
+        int id,
+        DebugSeverity severity,
+        int length,
+        IntPtr messagePtr,
+        IntPtr userParam
+    )
+    {
+        string message = Marshal.PtrToStringAnsi(messagePtr, length);
+        Console.WriteLine($"{source} {type} {id} {severity} {message}");
     }
 
     private void Resize(PixelSize size)
