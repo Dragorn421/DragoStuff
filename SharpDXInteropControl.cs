@@ -235,6 +235,12 @@ public class SharpDXInteropControl : Control
                 throw new Exception("DXRegisterObjectNV failed");
             }
 
+            var lockResult = Wgl.DXLockObjectsNV(hDevice, 1, new[] { hCfb });
+            if (!lockResult)
+            {
+                throw new Exception($"DXLockObjectsNV failed {GetLastError()}");
+            }
+
             var framebufferName = GL.GenFramebuffer();
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, framebufferName);
             GL.FramebufferTexture(
@@ -254,6 +260,12 @@ public class SharpDXInteropControl : Control
             GL.ClearColor(0, 1, 0, 1);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
+            var unlockResult = Wgl.DXUnlockObjectsNV(hDevice, 1, new[] { hCfb });
+            if (!unlockResult)
+            {
+                throw new Exception($"DXUnlockObjectsNV failed {GetLastError()}");
+            }
+
             Wgl.DXUnregisterObjectNV(hDevice, hCfb);
 
             Wgl.DXCloseDeviceNV(hDevice);
@@ -263,6 +275,9 @@ public class SharpDXInteropControl : Control
             _context!.Flush();
         }
     }
+
+    [DllImport("Kernel32.dll")]
+    public static extern int GetLastError();
 
     private void MyGLDebugMessageCallback(
         DebugSource source,
