@@ -13,6 +13,6 @@
         <Button Command="{Binding ClickMeAsyncTaskCommand}">Click me (async Task)</Button>
         <Button Command="{Binding ClickMeAsyncVoidWaitCommand}">Click me (async void, wait)</Button>
         <Button Command="{Binding ClickMeAsyncTaskWaitCommand}">Click me (async Task, wait)</Button>
-        <Button Command="{Binding ClickMeAsyncICommand}">Click me (async Task, wait, RelayCommand)</Button>
+        <Button Command="{Binding ClickMeAsyncICommandCommand}">Click me (async Task, wait, RelayCommand)</Button>
     </StackPanel>
 </Window>
