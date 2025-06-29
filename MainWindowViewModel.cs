@@ -1,9 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 
 namespace avalonia_command_exception;
 
-public class MainWindowViewModel
+public partial class MainWindowViewModel
 {
     public void ClickMeCommand()
     {
@@ -27,6 +28,13 @@ public class MainWindowViewModel
     }
 
     public async Task ClickMeAsyncTaskWaitCommand()
+    {
+        await Task.Delay(100);
+        throw new Exception();
+    }
+
+    [RelayCommand]
+    public async Task ClickMeAsyncICommand()
     {
         await Task.Delay(100);
         throw new Exception();
