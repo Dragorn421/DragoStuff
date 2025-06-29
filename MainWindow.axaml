@@ -1,9 +1,17 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:avalonia_command_exception"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="avalonia_command_exception.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
         Title="avalonia_command_exception">
-    Welcome to Avalonia!
+    <StackPanel>
+        <Button Command="{Binding ClickMeCommand}">Click me</Button>
+        <Button Command="{Binding ClickMeAsyncVoidCommand}">Click me (async void)</Button>
+        <Button Command="{Binding ClickMeAsyncTaskCommand}">Click me (async Task)</Button>
+        <Button Command="{Binding ClickMeAsyncVoidWaitCommand}">Click me (async void, wait)</Button>
+        <Button Command="{Binding ClickMeAsyncTaskWaitCommand}">Click me (async Task, wait)</Button>
+    </StackPanel>
 </Window>
