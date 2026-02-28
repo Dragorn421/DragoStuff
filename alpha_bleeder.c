@@ -46,7 +46,18 @@ bool alpha_bleeder(uint8_t *im, int width, int height, uint8_t *out, int iterati
     {
         struct Vec2i *coords;
         int n_coords;
-    } closest[height * width];
+    }* closest;
+    struct Vec2i* expand_to;
+
+    // allocate `closest` and `expand_to` in one call
+    // so that they can be freed later with one call
+    // as well. micro optimization
+    closest = malloc(sizeof(*closest) * (height * width) + sizeof(*expand_to) * (height * width));
+    expand_to = (struct Vec2i*)(closest + (height * width));
+
+    if (closest == NULL)
+        return false;
+
     for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
             closest[y * width + x].coords = NULL;
@@ -57,7 +68,6 @@ bool alpha_bleeder(uint8_t *im, int width, int height, uint8_t *out, int iterati
         // (including 0-alpha pixels from `im` that were processed)
         // and store their coordinates into `expand_to`
 
-        struct Vec2i expand_to[height * width];
         int expand_to_len = 0;
 
         for (int y = 0; y < height; y++)
@@ -154,6 +164,7 @@ bool alpha_bleeder(uint8_t *im, int width, int height, uint8_t *out, int iterati
                                             for (int x = 0; x < width; x++)
                                                 free(closest[y * width + x].coords);
                                         free(closest_pixels);
+                                        free(closest);
                                         return false;
                                     }
                                     closest_pixels = temp;
@@ -193,6 +204,8 @@ bool alpha_bleeder(uint8_t *im, int width, int height, uint8_t *out, int iterati
     for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
             free(closest[y * width + x].coords);
+
+    free(closest);
 
     for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
