@@ -19,11 +19,12 @@ struct Vec2i
  *
  * @param im A RGBA image of size width*height, with data laid out like {R0,G0,B0,A0,R1,G1,B1,A1,...}
  * @param out A buffer of size width*height*4 to write the resulting image to
+ * @param iteration_limit Count of bleed iterations. If zero, iterate until all pixels are filled.
  * @param average_nearest_colors If true, average the nearest visible pixels colors when they are equally distant.
  *                               Otherwise arbitrarily pick one of the colors.
  * @return true on success
  */
-bool alpha_bleeder(uint8_t *im, int width, int height, uint8_t *out, bool average_nearest_colors)
+bool alpha_bleeder(uint8_t *im, int width, int height, uint8_t *out, int iteration_limit, bool average_nearest_colors)
 {
 #define IMACCESS(im, x, y, channel) (im)[((y) * width + (x)) * 4 + (channel)]
 #define ALPHA(im, x, y) IMACCESS(im, x, y, 3)
@@ -50,7 +51,7 @@ bool alpha_bleeder(uint8_t *im, int width, int height, uint8_t *out, bool averag
         for (int x = 0; x < width; x++)
             closest[y * width + x].coords = NULL;
 
-    while (true)
+    for (int iter = 0; iteration_limit == 0 || iter < iteration_limit; iter++)
     {
         // Find all 0-alpha pixels with visible neighbours in `out`
         // (including 0-alpha pixels from `im` that were processed)
