@@ -153,24 +153,35 @@ bool alpha_bleeder(uint8_t *im, int width, int height, uint8_t *out, int iterati
                             }
                             else if (nc_dist_sq == closest_pixels_dist_sq)
                             {
-                                // Append nc to closest_pixels
-                                if (n_closest_pixels == closest_pixels_buf_len)
+                                bool nc_already_in_closest_pixels = false;
+                                for (int k = 0; k < n_closest_pixels; k++)
                                 {
-                                    closest_pixels_buf_len *= 2;
-                                    void *temp = realloc(closest_pixels, sizeof(closest_pixels[0]) * closest_pixels_buf_len);
-                                    if (temp == NULL)
+                                    if (closest_pixels[k].x == nc->x && closest_pixels[k].y == nc->y)
                                     {
-                                        for (int y = 0; y < height; y++)
-                                            for (int x = 0; x < width; x++)
-                                                free(closest[y * width + x].coords);
-                                        free(closest_pixels);
-                                        free(closest);
-                                        return false;
+                                        nc_already_in_closest_pixels = true;
                                     }
-                                    closest_pixels = temp;
                                 }
-                                closest_pixels[n_closest_pixels] = *nc;
-                                n_closest_pixels++;
+                                if (!nc_already_in_closest_pixels)
+                                {
+                                    // Append nc to closest_pixels
+                                    if (n_closest_pixels == closest_pixels_buf_len)
+                                    {
+                                        closest_pixels_buf_len *= 2;
+                                        void *temp = realloc(closest_pixels, sizeof(closest_pixels[0]) * closest_pixels_buf_len);
+                                        if (temp == NULL)
+                                        {
+                                            for (int y = 0; y < height; y++)
+                                                for (int x = 0; x < width; x++)
+                                                    free(closest[y * width + x].coords);
+                                            free(closest_pixels);
+                                            free(closest);
+                                            return false;
+                                        }
+                                        closest_pixels = temp;
+                                    }
+                                    closest_pixels[n_closest_pixels] = *nc;
+                                    n_closest_pixels++;
+                                }
                             }
                         }
                     }
