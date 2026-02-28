@@ -46,14 +46,14 @@ bool alpha_bleeder(uint8_t *im, int width, int height, uint8_t *out, int iterati
     {
         struct Vec2i *coords;
         int n_coords;
-    }* closest;
-    struct Vec2i* expand_to;
+    } *closest;
+    struct Vec2i *expand_to;
 
     // allocate `closest` and `expand_to` in one call
     // so that they can be freed later with one call
     // as well. micro optimization
     closest = malloc(sizeof(*closest) * (height * width) + sizeof(*expand_to) * (height * width));
-    expand_to = (struct Vec2i*)(closest + (height * width));
+    expand_to = (struct Vec2i *)(closest + (height * width));
 
     if (closest == NULL)
         return false;
