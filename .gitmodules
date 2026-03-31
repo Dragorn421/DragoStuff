@@ -1,0 +1,3 @@
+[submodule "asm-differ"]
+	path = asm-differ
+	url = git@github.com:simonlindholm/asm-differ.git
