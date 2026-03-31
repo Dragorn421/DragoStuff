@@ -3,7 +3,7 @@ set -ex
 
 make clean
 make EXPECTED=1
-rm -r expected
+rm -rf expected
 mkdir expected
 cp -r build expected/
 make clean
