@@ -1,0 +1,5 @@
+vram_start,given_name,name,type,given_size,size,rom,defined,user_declared,referenced,extract,segment,subsegment,referenced_by
+80000400,entrypoint,entrypoint,func,None,4,None,False,True,False,True,None,None,
+80000470,None,func_80000470,func,None,4,0x1F70,True,False,True,True,main,1F70,
+80000488,None,D_80000488,None,None,4,0x1F88,True,False,True,True,main,1F70,func_80000470
+8001E0C0,None,func_8001E0C0,func,None,4,0x1FBC0,True,False,True,True,main,1FBC0,
