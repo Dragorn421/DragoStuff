@@ -1,0 +1,71 @@
+name: Call_In_Textbin (Unknown)
+sha1: 941a40e756a1bcc35606ef9881fb24e354c0bd65
+options:
+  basename: call_in_textbin
+  target_path: baserom/call_in_textbin.z64
+  elf_path: build/call_in_textbin.elf
+  base_path: .
+  platform: n64
+  compiler: IDO
+
+  # asm_path: asm
+  # src_path: src
+  # build_path: build
+  # create_asm_dependencies: True
+
+  ld_script_path: call_in_textbin.ld
+  ld_dependencies: True
+
+  find_file_boundaries: True
+  header_encoding: ASCII
+
+  o_as_suffix: True
+  use_legacy_include_asm: False
+  mips_abi_float_regs: o32
+
+  # section_order: [".text", ".data", ".rodata", ".bss"]
+  # auto_link_sections: [".data", ".rodata", ".bss"]
+
+  symbol_addrs_path:
+    - symbol_addrs.txt
+  reloc_addrs_path:
+    - reloc_addrs.txt
+
+  # undefined_funcs_auto_path: undefined_funcs_auto.txt
+  # undefined_syms_auto_path: undefined_syms_auto.txt
+
+  extensions_path: tools/splat_ext
+
+  # string_encoding: ASCII
+  # data_string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+  # libultra_symbols: True
+  # hardware_regs: True
+  # gfx_ucode: # one of [f3d, f3db, f3dex, f3dexb, f3dex2]
+segments:
+  - name: header
+    type: header
+    start: 0x0
+
+  - name: ipl3
+    type: bin
+    start: 0x40
+
+  - type: bin
+    start: 0x1000
+
+  - name: main
+    type: code
+    start: 0x1F70
+    vram: 0x80000470
+    bss_size: 4
+    subsegments:
+      - [0x1F70, asm]
+      - [0x1FA0, textbin] # a mix of text, data and rodata we're not interested in
+      - {type: bss, vram: 0x8001E0C0}
+
+  - type: bin
+    start: 0x1FBC0
+
+  - [0x20000]

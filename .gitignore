@@ -1,0 +1,6 @@
+.venv
+./build
+call_in_textbin.d
+call_in_textbin.ld
+undefined_funcs_auto.txt
+undefined_syms_auto.txt
